@@ -5,9 +5,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, CreditCard, Lock, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function CheckoutPage() {
     const { items, cartTotal, discount, checkout } = useCart();
+    const { t, locale } = useLanguage();
     const router = useRouter();
     const [isProcessing, setIsProcessing] = useState(false);
     const [formData, setFormData] = useState({
@@ -141,17 +143,20 @@ export default function CheckoutPage() {
                     <div className="bg-gray-50 p-6 rounded-lg sticky top-24">
                         <h3 className="font-serif font-bold text-xl mb-6">Siparişiniz</h3>
                         <div className="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2">
-                            {items.map((item) => (
-                                <div key={item.id} className="flex gap-4 text-sm">
-                                    <div className="w-16 h-16 bg-white rounded-sm overflow-hidden flex-shrink-0">
-                                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                            {items.map((item) => {
+                                const name = locale === 'tr' ? item.nameTr : item.nameEn;
+                                return (
+                                    <div key={item.id} className="flex gap-4 text-sm">
+                                        <div className="w-16 h-16 bg-white rounded-sm overflow-hidden flex-shrink-0">
+                                            <img src={item.image} alt={name} className="w-full h-full object-cover" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold">{name}</p>
+                                            <p className="text-gray-500">{item.quantity} x {item.price.toLocaleString()} ₺</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="font-bold">{item.name}</p>
-                                        <p className="text-gray-500">{item.quantity} x {item.price.toLocaleString()} ₺</p>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
 
                         <div className="border-t border-gray-200 pt-4 space-y-2 text-sm">

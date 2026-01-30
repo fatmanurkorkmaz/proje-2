@@ -9,7 +9,9 @@
         "orders": "My Orders",
         "logout": "Logout",
         "admin": "Admin Panel",
-        "search": "Search..."
+        "customer": "CUSTOMER",
+        "search": "Search...",
+        "favorites": "Favorites"
     },
     "hero": {
         "new_collection": "NEW COLLECTION",
@@ -37,7 +39,9 @@
         "empty": "Your cart is empty",
         "total": "Total",
         "checkout": "Checkout",
-        "add": "Add to Cart"
+        "add": "Add to Cart",
+        "added": "Added to Cart",
+        "out_of_stock": "Out of Stock"
     },
     "about": {
         "hero": {
@@ -94,6 +98,16 @@
         },
         "no_results": "No products found matching your criteria.",
         "clear_all": "Clear all filters"
+    },
+    "favorites": {
+        "title": "My Favorites",
+        "subtitle": "All the jewelry pieces you love and saved to review later are here.",
+        "empty": "No favorites yet",
+        "empty_sub": "Explore our collection and add the pieces that capture your heart.",
+        "explore": "Explore Collection",
+        "items": "ITEMS",
+        "add": "Add to Favorites",
+        "remove": "Remove from Favorites"
     },
     "db": {
         "categories": {

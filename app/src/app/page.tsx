@@ -3,11 +3,12 @@
 import Link from 'next/link';
 import ProductCard from '@/components/ProductCard';
 import { ArrowRight, Mail } from 'lucide-react';
-import { products } from '@/data/products';
+import { useProducts } from '@/context/ProductContext';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function Home() {
   const { t } = useLanguage();
+  const { products } = useProducts();
   const newArrivals = products.filter(p => p.isNew).slice(0, 4);
 
   return (

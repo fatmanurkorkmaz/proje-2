@@ -3,16 +3,18 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Search, ShoppingBag, User, Menu, X, LogOut, Package } from 'lucide-react';
+import { Search, ShoppingBag, User, Menu, X, LogOut, Package, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useSettings } from '@/context/SettingsContext';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { useWishlist } from '@/context/WishlistContext';
 
 const Header = () => {
     const pathname = usePathname();
     const router = useRouter();
     const { items } = useCart();
+    const { favorites } = useWishlist();
     const { t, locale, setLocale } = useLanguage();
 
     if (pathname.startsWith('/admin')) return null;
@@ -149,7 +151,9 @@ const Header = () => {
                         {isUserMenuOpen && user && (
                             <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-100 rounded-sm shadow-2xl py-2 animate-in fade-in zoom-in duration-200 z-[60]">
                                 <div className="px-4 py-3 border-b border-gray-50 mb-1 bg-gray-50/50">
-                                    <p className="text-[10px] text-gray-400 uppercase font-black mb-1">{t('nav.admin')}</p>
+                                    <p className="text-[10px] text-gray-400 uppercase font-black mb-1">
+                                        {user.role === 'admin' ? t('nav.admin') : t('nav.customer')}
+                                    </p>
                                     <p className="text-sm font-black truncate text-secondary uppercase">
                                         {user.firstName} {user.lastName}
                                     </p>
@@ -185,6 +189,15 @@ const Header = () => {
                             </div>
                         )}
                     </div>
+
+                    <Link href="/favorites" className="p-2 hover:bg-secondary/5 rounded-full transition-colors relative group">
+                        <Heart className={`w-5 h-5 ${favorites.length > 0 ? 'text-primary' : 'text-secondary'}`} />
+                        {favorites.length > 0 && (
+                            <span className="absolute top-0 right-0 bg-primary text-primary-foreground text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                                {favorites.length}
+                            </span>
+                        )}
+                    </Link>
 
                     <Link href="/cart" className="p-2 hover:bg-secondary/5 rounded-full transition-colors relative group">
                         <ShoppingBag className="w-5 h-5 text-secondary" />
@@ -247,6 +260,14 @@ const Header = () => {
                                     {label}
                                 </Link>
                             ))}
+                            <Link
+                                href="/favorites"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="block text-xl font-serif font-bold text-secondary hover:text-primary transition-colors border-b border-gray-50 pb-4 flex items-center justify-between"
+                            >
+                                {locale === 'tr' ? 'Favorilerim' : 'My Favorites'}
+                                <Heart className={`w-5 h-5 ${favorites.length > 0 ? 'text-primary' : 'text-gray-300'}`} />
+                            </Link>
                             {user ? (
                                 <>
                                     <div className="border-b border-gray-50 pb-4 mb-4">

@@ -9,7 +9,9 @@
         "orders": "Siparişlerim",
         "logout": "Güvenli Çıkış",
         "admin": "Admin Paneli",
-        "search": "Ara..."
+        "customer": "MÜŞTERİ",
+        "search": "Ara...",
+        "favorites": "Favorilerim"
     },
     "hero": {
         "new_collection": "YENİ KOLEKSİYON",
@@ -37,7 +39,9 @@
         "empty": "Sepetiniz boş",
         "total": "Toplam",
         "checkout": "Ödeme Yap",
-        "add": "Sepete Ekle"
+        "add": "Sepete Ekle",
+        "added": "Sepete Eklendi",
+        "out_of_stock": "Stok Tükendi"
     },
     "about": {
         "hero": {
@@ -94,6 +98,16 @@
         },
         "no_results": "Kriterlerinize uygun ürün bulunamadı.",
         "clear_all": "Tüm filtreleri temizle"
+    },
+    "favorites": {
+        "title": "Favorilerim",
+        "subtitle": "Beğendiğiniz ve daha sonra incelemek üzere kaydettiğiniz tüm mücevherler burada.",
+        "empty": "Henüz favori ürününüz yok",
+        "empty_sub": "Koleksiyonumuzu keşfedin ve kalbinizi çalan parçaları buraya ekleyin.",
+        "explore": "Koleksiyonu Keşfet",
+        "items": "ÜRÜN",
+        "add": "Favorilere Ekle",
+        "remove": "Favorilerden Çıkar"
     },
     "db": {
         "categories": {

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { Search, Plus, Filter, ArrowUpDown, MoreHorizontal, Edit, Trash2, Eye, Package } from 'lucide-react';
 import { useProducts } from '@/context/ProductContext';
@@ -7,6 +8,20 @@ import { products } from '@/data/products'; // Keep for type fallback if needed 
 
 export default function AdminProductsPage() {
     const { products, deleteProduct } = useProducts();
+
+    const [search, setSearch] = useState('');
+    const [category, setCategory] = useState('All');
+
+    const filteredProducts = products.filter(p => {
+        const matchesSearch = p.nameTr.toLowerCase().includes(search.toLowerCase()) ||
+            p.nameEn.toLowerCase().includes(search.toLowerCase()) ||
+            p.id.toLowerCase().includes(search.toLowerCase());
+        const matchesCategory = category === 'All' || p.category === category;
+        return matchesSearch && matchesCategory;
+    });
+
+    const lowStockCount = products.filter(p => p.stock > 0 && p.stock < 5).length;
+    const outOfStockCount = products.filter(p => p.stock === 0).length;
 
     return (
         <div className="space-y-8">
@@ -18,7 +33,13 @@ export default function AdminProductsPage() {
                 </div>
                 <div className="flex gap-3">
                     <div className="relative">
-                        <input type="text" placeholder="Stok kodu, isim..." className="pl-10 pr-4 py-2 border border-gray-200 rounded-sm w-64 focus:ring-1 focus:ring-primary outline-none" />
+                        <input
+                            type="text"
+                            placeholder="Stok kodu, isim..."
+                            className="pl-10 pr-4 py-2 border border-gray-200 rounded-sm w-full md:w-64 focus:ring-1 focus:ring-primary outline-none transition-all"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
                         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     </div>
                     <Link href="/admin/products/new" className="bg-primary text-secondary-foreground px-4 py-2 rounded-sm font-bold flex items-center gap-2 hover:bg-primary/90 transition-colors">
@@ -72,75 +93,121 @@ export default function AdminProductsPage() {
             </div>
 
             {/* Table */}
-            <div className="bg-white border border-gray-100 rounded-sm shadow-sm overflow-hidden">
-                <div className="flex items-center gap-2 p-4 border-b border-gray-100">
-                    <button className="px-4 py-2 bg-yellow-400 text-secondary-foreground text-sm font-bold rounded-sm">Tüm Ürünler</button>
-                    <button className="px-4 py-2 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-sm hover:bg-gray-50">Yüzükler</button>
-                    <button className="px-4 py-2 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-sm hover:bg-gray-50">Kolyeler</button>
+            <div className="bg-white border border-gray-100 rounded-sm shadow-sm overflow-x-auto lg:overflow-hidden">
+                <div className="min-w-[1000px] lg:min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 p-4 border-b border-gray-100">
+                        <button
+                            onClick={() => setCategory('All')}
+                            className={`px-4 py-2 text-sm font-bold rounded-sm transition-colors ${category === 'All' ? 'bg-primary text-secondary-foreground' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                        >
+                            Tüm Ürünler
+                        </button>
+                        <button
+                            onClick={() => setCategory('Rings')}
+                            className={`px-4 py-2 text-sm font-medium rounded-sm transition-colors ${category === 'Rings' ? 'bg-primary text-secondary-foreground font-bold' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                        >
+                            Yüzükler
+                        </button>
+                        <button
+                            onClick={() => setCategory('Necklaces')}
+                            className={`px-4 py-2 text-sm font-medium rounded-sm transition-colors ${category === 'Necklaces' ? 'bg-primary text-secondary-foreground font-bold' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                        >
+                            Kolyeler
+                        </button>
+                        <button
+                            onClick={() => setCategory('Bracelets')}
+                            className={`px-4 py-2 text-sm font-medium rounded-sm transition-colors ${category === 'Bracelets' ? 'bg-primary text-secondary-foreground font-bold' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                        >
+                            Bileklikler
+                        </button>
+                        <button
+                            onClick={() => setCategory('Earrings')}
+                            className={`px-4 py-2 text-sm font-medium rounded-sm transition-colors ${category === 'Earrings' ? 'bg-primary text-secondary-foreground font-bold' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                        >
+                            Küpeler
+                        </button>
 
-                    <div className="ml-auto flex gap-2">
-                        <button className="px-4 py-2 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-sm hover:bg-gray-50 flex items-center gap-2">
-                            <Filter className="w-4 h-4" /> Filtrele
-                        </button>
-                        <button className="px-4 py-2 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-sm hover:bg-gray-50 flex items-center gap-2">
-                            <ArrowUpDown className="w-4 h-4" /> Sırala
-                        </button>
+                        <div className="ml-auto flex gap-2">
+                            <button className="px-4 py-2 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-sm hover:bg-gray-50 flex items-center gap-2">
+                                <Filter className="w-4 h-4" /> Filtrele
+                            </button>
+                            <button className="px-4 py-2 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-sm hover:bg-gray-50 flex items-center gap-2">
+                                <ArrowUpDown className="w-4 h-4" /> Sırala
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <table className="w-full text-left text-sm text-gray-600">
-                    <thead className="bg-gray-50 text-xs uppercase font-bold text-gray-500 tracking-wider">
-                        <tr>
-                            <th className="p-4">Görsel</th>
-                            <th className="p-4">Ürün Adı</th>
-                            <th className="p-4">SKU</th>
-                            <th className="p-4">Kategori</th>
-                            <th className="p-4">Fiyat</th>
-                            <th className="p-4">Durum</th>
-                            <th className="p-4 text-right">İşlemler</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                        {products.map((product) => (
-                            <tr key={product.id} className="hover:bg-gray-50 transition-colors">
-                                <td className="p-4">
-                                    <div className="w-12 h-12 bg-gray-100 rounded-sm overflow-hidden">
-                                        <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
-                                    </div>
-                                </td>
-                                <td className="p-4">
-                                    <p className="font-bold text-gray-900">{product.name}</p>
-                                    <p className="text-xs text-gray-400">Essential Collection</p>
-                                </td>
-                                <td className="p-4 font-mono text-xs text-yellow-700">JW-{product.id.padStart(4, '0')}</td>
-                                <td className="p-4">{product.category}</td>
-                                <td className="p-4 font-bold text-gray-900">{product.price.toLocaleString()} ₺</td>
-                                <td className="p-4">
-                                    {product.inStock ? (
-                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
-                                            Stokta
-                                        </span>
-                                    ) : (
-                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
-                                            Tükendi
-                                        </span>
-                                    )}
-                                </td>
-                                <td className="p-4 text-right">
-                                    <div className="flex justify-end gap-2">
-                                        <button className="p-2 hover:bg-gray-100 rounded-full text-gray-500"><Edit className="w-4 h-4" /></button>
-                                        <button
-                                            onClick={() => deleteProduct(product.id)}
-                                            className="p-2 hover:bg-red-50 rounded-full text-red-500 hover:cursor-pointer"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                </td>
+                    <table className="w-full text-left text-sm text-gray-600">
+                        <thead className="bg-gray-50 text-xs uppercase font-bold text-gray-500 tracking-wider">
+                            <tr>
+                                <th className="p-4">Görsel</th>
+                                <th className="p-4">Ürün Adı</th>
+                                <th className="p-4">SKU</th>
+                                <th className="p-4">Kategori</th>
+                                <th className="p-4">Fiyat</th>
+                                <th className="p-4">Stok</th>
+                                <th className="p-4">Durum</th>
+                                <th className="p-4 text-right">İşlemler</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {filteredProducts.map((product) => (
+                                <tr key={product.id} className="hover:bg-gray-50 transition-colors">
+                                    <td className="p-4">
+                                        <div className="w-12 h-12 bg-gray-100 rounded-sm overflow-hidden">
+                                            <img src={product.image} alt={product.nameTr} className="w-full h-full object-cover" />
+                                        </div>
+                                    </td>
+                                    <td className="p-4">
+                                        <p className="font-bold text-gray-900">{product.nameTr}</p>
+                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{product.nameEn}</p>
+                                    </td>
+                                    <td className="p-4 font-mono text-xs text-yellow-700">JW-{product.id.slice(-6).toUpperCase()}</td>
+                                    <td className="p-4">{product.category}</td>
+                                    <td className="p-4 font-bold text-gray-900">{product.price.toLocaleString()} ₺</td>
+                                    <td className="p-4">
+                                        <span className={`font-bold ${product.stock < 5 ? 'text-red-600' : 'text-gray-900'}`}>
+                                            {product.stock}
+                                        </span>
+                                    </td>
+                                    <td className="p-4">
+                                        {product.stock > 0 ? (
+                                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                                                Stokta
+                                            </span>
+                                        ) : (
+                                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
+                                                Tükendi
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td className="p-4 text-right">
+                                        <div className="flex justify-end gap-2 text-center items-center">
+                                            <Link href={`/admin/products/${product.id}`} className="p-2 hover:bg-gray-100 rounded-full text-gray-500">
+                                                <Edit className="w-4 h-4" />
+                                            </Link>
+                                            <button
+                                                onClick={() => deleteProduct(product.id)}
+                                                className="p-2 hover:bg-red-50 rounded-full text-red-500 hover:cursor-pointer"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    {filteredProducts.length === 0 && (
+                        <div className="py-12 text-center">
+                            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Search className="w-8 h-8 text-gray-300" />
+                            </div>
+                            <h3 className="text-gray-900 font-bold">Sonuç bulunamadı</h3>
+                            <p className="text-gray-500 text-sm">Aramanızı veya filtrelerinizi değiştirmeyi deneyin.</p>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

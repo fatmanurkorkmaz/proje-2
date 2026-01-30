@@ -4,17 +4,18 @@ import { useCart } from '@/context/CartContext';
 import { Minus, Plus, Trash2, ArrowLeft, ShieldCheck, Truck, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function CartPage() {
     const { items, removeFromCart, updateQuantity, cartTotal, discount, promoCode, setPromoCode, checkout } = useCart();
     const router = useRouter();
+    const { t, locale } = useLanguage();
 
     const handleQuantityChange = (id: string, newQuantity: number) => {
         if (newQuantity < 1) return;
         updateQuantity(id, newQuantity);
     };
 
-    // Replaced direct checkout with navigation
     const handleProceedToCheckout = () => {
         router.push('/checkout');
     };
@@ -49,50 +50,52 @@ export default function CartPage() {
             <div className="flex flex-col lg:flex-row gap-12">
                 {/* Cart Items */}
                 <div className="flex-1 space-y-6">
-                    {items.map((item) => (
-                        <div key={item.id} className="flex gap-6 p-6 border border-gray-100 rounded-lg hover:shadow-md transition-shadow bg-white">
-                            <div className="w-24 h-24 sm:w-32 sm:h-32 bg-secondary/5 rounded-md overflow-hidden flex-shrink-0">
-                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                            </div>
-
-                            <div className="flex-1 flex flex-col justify-between">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h3 className="font-serif font-bold text-lg text-foreground"><Link href={`/products/${item.id}`}>{item.name}</Link></h3>
-                                        <p className="text-sm text-gray-500">{item.material}</p>
-                                        {item.category === 'Rings' && <p className="text-sm text-gray-500">Boyut: US 7</p>} {/* Placeholder size */}
-                                    </div>
-                                    <p className="font-bold text-lg">{item.price.toLocaleString()} ₺</p>
+                    {items.map((item) => {
+                        const name = locale === 'tr' ? item.nameTr : item.nameEn;
+                        return (
+                            <div key={item.id} className="flex gap-6 p-6 border border-gray-100 rounded-lg hover:shadow-md transition-shadow bg-white">
+                                <div className="w-24 h-24 sm:w-32 sm:h-32 bg-secondary/5 rounded-md overflow-hidden flex-shrink-0">
+                                    <img src={item.image} alt={name} className="w-full h-full object-cover" />
                                 </div>
 
-                                <div className="flex justify-between items-end mt-4">
-                                    <div className="flex items-center gap-3 border border-gray-200 rounded-sm px-2 py-1">
-                                        <button
-                                            onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                                            className="p-1 hover:text-primary transition-colors disabled:opacity-30"
-                                            disabled={item.quantity <= 1}
-                                        >
-                                            <Minus className="w-4 h-4" />
-                                        </button>
-                                        <span className="text-sm font-medium w-4 text-center">{item.quantity}</span>
-                                        <button
-                                            onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                                            className="p-1 hover:text-primary transition-colors"
-                                        >
-                                            <Plus className="w-4 h-4" />
-                                        </button>
+                                <div className="flex-1 flex flex-col justify-between">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h3 className="font-serif font-bold text-lg text-foreground"><Link href={`/products/${item.id}`}>{name}</Link></h3>
+                                            <p className="text-sm text-gray-500">{item.category}</p>
+                                        </div>
+                                        <p className="font-bold text-lg">{item.price.toLocaleString()} ₺</p>
                                     </div>
 
-                                    <button
-                                        onClick={() => removeFromCart(item.id)}
-                                        className="text-sm text-red-500 hover:text-red-700 flex items-center gap-1 font-medium underline decoration-red-200 hover:decoration-red-500"
-                                    >
-                                        <Trash2 className="w-4 h-4" /> Kaldır
-                                    </button>
+                                    <div className="flex justify-between items-end mt-4">
+                                        <div className="flex items-center gap-3 border border-gray-200 rounded-sm px-2 py-1">
+                                            <button
+                                                onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                                                className="p-1 hover:text-primary transition-colors disabled:opacity-30"
+                                                disabled={item.quantity <= 1}
+                                            >
+                                                <Minus className="w-4 h-4" />
+                                            </button>
+                                            <span className="text-sm font-medium w-4 text-center">{item.quantity}</span>
+                                            <button
+                                                onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                                                className="p-1 hover:text-primary transition-colors"
+                                            >
+                                                <Plus className="w-4 h-4" />
+                                            </button>
+                                        </div>
+
+                                        <button
+                                            onClick={() => removeFromCart(item.id)}
+                                            className="text-sm text-red-500 hover:text-red-700 flex items-center gap-1 font-medium underline decoration-red-200 hover:decoration-red-500"
+                                        >
+                                            <Trash2 className="w-4 h-4" /> Kaldır
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
 
                     <div className="pt-6">
                         <Link href="/products" className="inline-flex items-center gap-2 text-primary font-medium hover:underline">

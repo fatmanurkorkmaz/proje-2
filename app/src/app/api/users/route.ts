@@ -15,7 +15,7 @@ export async function GET() {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { firstName, lastName, email, password } = body;
+        const { firstName, lastName, email, password, role, isVerified } = body;
 
         const existingUser = await findUserByEmail(email);
         if (existingUser) {
@@ -27,7 +27,8 @@ export async function POST(request: Request) {
             lastName,
             email,
             password,
-            role: 'customer'
+            role: role || 'customer',
+            isVerified: isVerified || false
         });
 
         return NextResponse.json(newUser, { status: 201 });

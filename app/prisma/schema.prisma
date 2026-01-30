@@ -9,53 +9,71 @@ datasource db {
 }
 
 model User {
+  id         String   @id @default(cuid())
+  firstName  String
+  lastName   String
+  email      String   @unique
+  password   String
+  role       String   @default("customer")
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  orders     Order[]
+}
+
+model VerificationToken {
   id        String   @id @default(cuid())
-  firstName String
-  lastName  String
-  email     String   @unique
-  password  String
-  role      String   @default("customer")
+  email     String
+  code      String
+  expiresAt DateTime
   createdAt DateTime @default(now())
-  orders    Order[]
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  name        String
-  description String   @db.Text
-  price       Float
-  image       String
-  category    String
-  isNew       Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  items       OrderItem[]
+  id            String      @id @default(cuid())
+  nameTr        String
+  nameEn        String
+  descriptionTr String      @db.Text
+  descriptionEn String      @db.Text
+  price         Float
+  weight        Float       @default(0)
+  image         String
+  category      String
+  isNew         Boolean     @default(false)
+  stock         Int         @default(0)
+  createdAt     DateTime    @default(now())
+  items         OrderItem[]
 }
 
 model Order {
-  id          String      @id @default(cuid())
-  userId      String?
-  user        User?       @relation(fields: [userId], references: [id])
-  customer    Json        // Fallback for guest orders or quick access
-  total       Float
-  status      String      @default("pending")
-  items       OrderItem[]
-  createdAt   DateTime    @default(now())
+  id        String      @id @default(cuid())
+  userId    String?
+  customer  Json
+  total     Float
+  status    String      @default("pending")
+  createdAt DateTime    @default(now())
+  user      User?       @relation(fields: [userId], references: [id])
+  items     OrderItem[]
+
+  @@index([userId], map: "Order_userId_fkey")
 }
 
 model OrderItem {
   id        String  @id @default(cuid())
   orderId   String
-  order     Order   @relation(fields: [orderId], references: [id])
   productId String
-  product   Product @relation(fields: [productId], references: [id])
   quantity  Int
   price     Float
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId], map: "OrderItem_orderId_fkey")
+  @@index([productId], map: "OrderItem_productId_fkey")
 }
 
 model Settings {
-  id           Int     @id @default(1)
-  siteTitle    String  @default("AVCI Kuyumculuk")
-  founderName  String  @default("Aykal Avcı")
-  footerText   String  @default("1995'ten beri zamansız hikayeler işliyoruz.")
-  contactEmail String  @default("hello@avcijewelry.com")
+  id           Int    @id @default(1)
+  siteTitle    String @default("AVCI Kuyumculuk")
+  founderName  String @default("Aykal Avcı")
+  footerText   String @default("1995'ten beri zamansız hikayeler işliyoruz.")
+  contactEmail String @default("hello@avcijewelry.com")
 }

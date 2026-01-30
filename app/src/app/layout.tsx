@@ -8,6 +8,7 @@ import { CartProvider } from '@/context/CartContext';
 import { SettingsProvider } from '@/context/SettingsContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { LanguageProvider } from '@/context/LanguageContext';
+import { WishlistProvider } from '@/context/WishlistContext';
 import { migrateJsonToSql } from '@/lib/db';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -37,15 +38,17 @@ export default async function RootLayout({
         <SettingsProvider>
           <LanguageProvider>
             <AuthProvider>
-              <ProductProvider>
-                <CartProvider>
-                  <Header />
-                  <main className="flex-grow">
-                    {children}
-                  </main>
-                  <Footer />
-                </CartProvider>
-              </ProductProvider>
+              <WishlistProvider>
+                <ProductProvider>
+                  <CartProvider>
+                    <Header />
+                    <main className="flex-grow">
+                      {children}
+                    </main>
+                    <Footer />
+                  </CartProvider>
+                </ProductProvider>
+              </WishlistProvider>
             </AuthProvider>
           </LanguageProvider>
         </SettingsProvider>

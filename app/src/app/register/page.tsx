@@ -9,6 +9,8 @@ import { useAuth } from '@/context/AuthContext';
 export default function RegisterPage() {
     const router = useRouter();
     const { login } = useAuth();
+    const [loading, setLoading] = useState(false);
+
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -28,11 +30,15 @@ export default function RegisterPage() {
             return;
         }
 
+        setLoading(true);
         try {
             const res = await fetch('/api/users', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    ...formData,
+                    isVerified: true
+                }),
             });
 
             const data = await res.json();
@@ -52,84 +58,100 @@ export default function RegisterPage() {
             router.push('/');
         } catch (error) {
             alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-[80vh] flex items-center justify-center bg-secondary/5 py-12">
-            <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-sm border border-gray-100">
-                <div className="text-center mb-8">
-                    <div className="w-12 h-12 bg-secondary text-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Diamond className="w-6 h-6 fill-current" />
+        <div className="min-h-[85vh] flex items-center justify-center bg-secondary/5 py-12 px-4">
+            <div className="w-full max-w-md bg-white p-10 rounded-sm shadow-xl border border-secondary/5 relative overflow-hidden">
+                <div className="text-center mb-10">
+                    <div className="w-14 h-14 bg-secondary text-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner ring-4 ring-primary/10">
+                        <Diamond className="w-7 h-7 fill-current" />
                     </div>
-                    <h1 className="text-2xl font-serif font-bold text-gray-900">Aramıza Katılın</h1>
-                    <p className="text-gray-500 text-sm">AVCI Kuyumculuk ayrıcalıklarından yararlanın.</p>
+                    <h1 className="text-3xl font-serif font-bold text-secondary mb-2 tracking-tight">
+                        Hemen Başlayın
+                    </h1>
+                    <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.2em]">
+                        AVCI KUYUMCULUK AYRICALIĞI
+                    </p>
                 </div>
 
-                <form onSubmit={handleRegister} className="space-y-4">
+                <form onSubmit={handleRegister} className="space-y-6">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Ad</label>
+                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Ad</label>
                             <input
                                 type="text"
                                 name="firstName"
                                 required
+                                value={formData.firstName}
                                 onChange={handleChange}
-                                className="w-full px-4 py-3 border border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                placeholder="Adınız"
+                                className="w-full px-4 py-3.5 border border-gray-100 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none text-sm"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Soyad</label>
+                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Soyad</label>
                             <input
                                 type="text"
                                 name="lastName"
                                 required
+                                value={formData.lastName}
                                 onChange={handleChange}
-                                className="w-full px-4 py-3 border border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                placeholder="Soyadınız"
+                                className="w-full px-4 py-3.5 border border-gray-100 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none text-sm"
                             />
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">E-posta</label>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">E-posta</label>
                         <input
                             type="email"
                             name="email"
                             required
+                            value={formData.email}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                            placeholder="ornek@mail.com"
+                            className="w-full px-4 py-3.5 border border-gray-100 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none text-sm"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Şifre</label>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Şifre Belirleyin</label>
                         <input
                             type="password"
                             name="password"
                             required
+                            value={formData.password}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                            placeholder="******"
+                            className="w-full px-4 py-3.5 border border-gray-100 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none text-sm"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Şifre Tekrar</label>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Şifre Tekrar</label>
                         <input
                             type="password"
                             name="confirmPassword"
                             required
+                            value={formData.confirmPassword}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                            placeholder="******"
+                            className="w-full px-4 py-3.5 border border-gray-100 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none text-sm"
                         />
                     </div>
-
                     <button
                         type="submit"
-                        className="w-full bg-primary text-secondary-foreground py-3 rounded-sm font-bold uppercase tracking-wider hover:bg-primary/90 transition-colors mt-4"
+                        disabled={loading}
+                        className="w-full bg-secondary text-white py-4 rounded-sm font-black text-xs uppercase tracking-[0.2em] hover:bg-primary hover:text-secondary transition-all shadow-xl active:scale-[0.98] disabled:opacity-50"
                     >
-                        Üye Ol
+                        {loading ? 'KAYDEDİLİYOR...' : 'ÜYELİĞİ TAMAMLA'}
                     </button>
                 </form>
 
-                <div className="mt-8 text-center text-sm text-gray-500">
-                    Zaten hesabınız var mı? <Link href="/login" className="text-primary font-bold hover:underline">Giriş Yap</Link>
+                <div className="mt-10 text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    Zaten hesabınız var mı? <Link href="/login" className="text-primary hover:underline ml-1">GİRİŞ YAP</Link>
                 </div>
             </div>
         </div>

@@ -1,97 +1,113 @@
 export interface Product {
     id: string;
-    name: string;
-    description: string;
+    nameTr: string;
+    nameEn: string;
+    descriptionTr: string;
+    descriptionEn: string;
     price: number;
+    weight: number;
     image: string;
-    category: 'Rings' | 'Necklaces' | 'Earrings' | 'Bracelets';
-    material: 'Yellow Gold' | 'White Gold' | 'Rose Gold' | 'Silver';
+    category: string;
     isNew?: boolean;
-    inStock: boolean;
-    tags?: string[];
+    stock: number;
 }
 
 export const products: Product[] = [
     {
         id: '1',
-        name: '18k Altın Sonsuzluk Yüzüğü',
-        description: 'Sonsuz aşkın sembolü, 18k sarı altın içine yerleştirilmiş kesintisiz elmaslar.',
-        price: 35000,
+        nameTr: '18k Altın Sonsuzluk Yüzüğü',
+        nameEn: '18k Gold Eternity Ring',
+        descriptionTr: 'Sonsuz aşkın sembolü, 18k sarı altın içine yerleştirilmiş kesintisiz elmaslar.',
+        descriptionEn: 'Symbol of eternal love, continuous diamonds set in 18k yellow gold.',
+        price: 45000,
+        weight: 5.2,
         image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=800',
         category: 'Rings',
-        material: 'Yellow Gold',
         isNew: true,
-        inStock: true,
-        tags: ['Limited Edition']
+        stock: 5
     },
     {
         id: '2',
-        name: 'Parlak İnci & Gümüş Kolye',
-        description: 'Zarif bir gümüş zincirden sarkan tek ve mükemmel bir tatlı su incisi.',
+        nameTr: 'İnci & Gümüş Kolye',
+        nameEn: 'Pearl & Silver Necklace',
+        descriptionTr: 'Zarif bir gümüş zincirden sarkan tek ve mükemmel bir tatlı su incisi.',
+        descriptionEn: 'A single, perfect freshwater pearl suspended from an elegant silver chain.',
         price: 15000,
+        weight: 12.5,
         image: 'https://images.unsplash.com/photo-1599643478518-17488fbbcd75?auto=format&fit=crop&q=80&w=800',
         category: 'Necklaces',
-        material: 'Silver',
-        inStock: true
+        stock: 10
     },
     {
         id: '3',
-        name: 'Aura 14k Altın Minimalist Kelepçe',
-        description: 'Şık ve sofistike, bu açık kelepçe modern minimalistler için tasarlandı.',
+        nameTr: 'Minimalist Altın Kelepçe',
+        nameEn: 'Minimalist Gold Bangle',
+        descriptionTr: 'Modern ve şık, 14k altın kaplama el yapımı minimalist kelepçe bilezik.',
+        descriptionEn: 'Modern and chic, handmade minimalist bangle plated in 14k gold.',
         price: 28000,
+        weight: 22.0,
         image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=800',
         category: 'Bracelets',
-        material: 'Yellow Gold',
-        inStock: true
+        stock: 12
     },
     {
         id: '4',
-        name: 'Gümüş Dövme Halka Küpe',
-        description: 'Bu çok yönlü günlük halka küpelerde ışığı yakalayan el dövmesi dokusu.',
+        nameTr: 'Dövme Halka Küpe',
+        nameEn: 'Hammered Hoop Earrings',
+        descriptionTr: 'Işığı mükemmel yansıtan el dövmesi dokulu gümüş halka küpeler.',
+        descriptionEn: 'Silver hoop earrings with a hand-hammered texture that reflects light perfectly.',
         price: 7500,
+        weight: 8.4,
         image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=800',
         category: 'Earrings',
-        material: 'Silver',
-        inStock: true
+        stock: 8
     },
     {
         id: '5',
-        name: 'Stellar Rose Gold Tektaş',
-        description: 'Romantik rose gold bir bant içine yerleştirilmiş nefes kesici oval kesim tektaş.',
-        price: 45000,
+        nameTr: 'Stellar Rose Gold Tektaş',
+        nameEn: 'Stellar Rose Gold Solitaire',
+        descriptionTr: 'Romantik rose gold bant içine yerleştirilmiş pırlanta tektaş yüzük.',
+        descriptionEn: 'Diamond solitaire ring set in a romantic rose gold band.',
+        price: 55000,
+        weight: 4.8,
         image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&q=80&w=800',
         category: 'Rings',
-        material: 'Rose Gold',
-        inStock: true
+        stock: 15
     },
     {
         id: '6',
-        name: 'Heritage Madalyon Zincir Kolye',
-        description: 'Çok katmanlı altın zincir üzerinde vintage esintili madalyon uçlar.',
-        price: 19500,
-        image: 'https://images.unsplash.com/photo-1599643477877-53c7c25c34e3?auto=format&fit=crop&q=80&w=800',
-        category: 'Necklaces',
-        material: 'Yellow Gold',
-        inStock: true
+        nameTr: 'Safir Elmas Bileklik',
+        nameEn: 'Sapphire Diamond Bracelet',
+        descriptionTr: 'Safir taşları ve pırlantalarla süslenmiş görkemli beyaz altın bileklik.',
+        descriptionEn: 'Majestic white gold bracelet adorned with sapphire stones and diamonds.',
+        price: 42000,
+        weight: 15.6,
+        image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=800',
+        category: 'Bracelets',
+        stock: 1
     },
     {
         id: '7',
-        name: 'Pırlanta Çivili Küpe',
-        description: 'Her ortama ışıltı katan klasik parlak kesim pırlantalar.',
-        price: 32000,
-        image: 'https://images.unsplash.com/photo-1588661759021-d41933df57ed?auto=format&fit=crop&q=80&w=800',
-        category: 'Earrings',
-        material: 'White Gold',
-        inStock: true
+        nameTr: 'Zümrüt Damla Kolye',
+        nameEn: 'Emerald Drop Necklace',
+        descriptionTr: 'Damla kesim zümrüt ve çevreleyen küçük elmaslarla eşsiz bir zarafet.',
+        descriptionEn: 'A pear-cut emerald surrounded by small diamonds for unique elegance.',
+        price: 38000,
+        weight: 10.2,
+        image: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?auto=format&fit=crop&q=80&w=800',
+        category: 'Necklaces',
+        stock: 4
     },
     {
         id: '8',
-        name: 'Yakut Nişan Yüzüğü',
-        description: 'Pırlantalarla çevrili derin kırmızı bir yakut.',
-        price: 55000,
-        image: 'https://images.unsplash.com/photo-1603561596112-0a132b7223ca?auto=format&fit=crop&q=80&w=800',
-        category: 'Rings',
-        material: 'Rose Gold',
-        inStock: false
+        nameTr: 'Klasik Pırlanta Küpe',
+        nameEn: 'Classic Diamond Studs',
+        descriptionTr: 'Her stile uyum sağlayan, zamansız ve ışıltılı pırlanta çivili küpeler.',
+        descriptionEn: 'Timeless and sparkling diamond stud earrings that suit every style.',
+        price: 12000,
+        weight: 2.5,
+        image: 'https://images.unsplash.com/photo-1635767798638-3e25273a8256?auto=format&fit=crop&q=80&w=800',
+        category: 'Earrings',
+        stock: 15
     }
 ];
