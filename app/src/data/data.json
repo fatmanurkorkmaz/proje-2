@@ -91,5 +91,16 @@
     "founderName": "Aykal Avcı",
     "footerText": "1995'ten beri zamansız hikayeler işliyoruz.",
     "contactEmail": "hello@avcijewelry.com"
-  }
+  },
+  "users": [
+    {
+      "firstName": "fatmanur",
+      "lastName": "korkmaz",
+      "email": "fatmaanurr67@gmail.com",
+      "password": "fatmanur123",
+      "role": "customer",
+      "id": "39vuy4swx",
+      "createdAt": "2026-01-30T12:03:50.834Z"
+    }
+  ]
 }

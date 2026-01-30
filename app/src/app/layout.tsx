@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import { ProductProvider } from '@/context/ProductContext';
 import { CartProvider } from '@/context/CartContext';
 import { SettingsProvider } from '@/context/SettingsContext';
+import { AuthProvider } from '@/context/AuthContext';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' });
@@ -26,15 +27,17 @@ export default function RootLayout({
         className={`${inter.variable} ${playfair.variable} antialiased flex flex-col min-h-screen`}
       >
         <SettingsProvider>
-          <ProductProvider>
-            <CartProvider>
-              <Header />
-              <main className="flex-grow">
-                {children}
-              </main>
-              <Footer />
-            </CartProvider>
-          </ProductProvider>
+          <AuthProvider>
+            <ProductProvider>
+              <CartProvider>
+                <Header />
+                <main className="flex-grow">
+                  {children}
+                </main>
+                <Footer />
+              </CartProvider>
+            </ProductProvider>
+          </AuthProvider>
         </SettingsProvider>
       </body>
     </html>

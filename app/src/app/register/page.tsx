@@ -4,9 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Diamond } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function RegisterPage() {
     const router = useRouter();
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -19,15 +21,38 @@ export default function RegisterPage() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleRegister = (e: React.FormEvent) => {
+    const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         if (formData.password !== formData.confirmPassword) {
             alert('Şifreler eşleşmiyor!');
             return;
         }
-        // Mock registration
-        alert('Üyelik oluşturuldu! Giriş yapabilirsiniz.');
-        router.push('/login');
+
+        try {
+            const res = await fetch('/api/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.error || 'Üyelik oluşturulamadı.');
+                return;
+            }
+
+            // Automatically login
+            login({
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                role: 'customer'
+            });
+            router.push('/');
+        } catch (error) {
+            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+        }
     };
 
     return (

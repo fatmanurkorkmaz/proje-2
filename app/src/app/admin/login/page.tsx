@@ -3,20 +3,41 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Diamond, Lock } from 'lucide-react';
-import Cookies from 'js-cookie';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const router = useRouter();
+    const { login } = useAuth();
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === 'admin') {
-            Cookies.set('admin_auth', 'true', { expires: 1, path: '/' }); // 1 day session
-            window.location.href = '/admin';
-        } else {
-            setError('Hatalı şifre.');
+        setError('');
+
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: 'admin@avcikuyumculuk.com', password }), // For now using the password field as before but logic supports full login
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setError(data.error || 'Hatalı şifre.');
+                return;
+            }
+
+            if (data.user.role !== 'admin') {
+                setError('Bu alana sadece admin girişi yapılabilir.');
+                return;
+            }
+
+            login(data.user);
+            router.push('/admin');
+        } catch (err) {
+            setError('Bir hata oluştu.');
         }
     };
 

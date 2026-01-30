@@ -1,16 +1,41 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Search, ShoppingBag, User, Menu, X } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Search, ShoppingBag, User, Menu, X, LogOut, Package } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useSettings } from '@/context/SettingsContext';
+import { useAuth } from '@/context/AuthContext';
 
 const Header = () => {
+    const pathname = usePathname();
+    const router = useRouter();
     const { items } = useCart();
-    const { siteTitle } = useSettings();
+
+    if (pathname.startsWith('/admin')) return null;
+    const { user, logout } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const userMenuRef = useRef<HTMLDivElement>(null);
     const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
+
+    // Click outside handler
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+                setIsUserMenuOpen(false);
+            }
+        };
+
+        if (isUserMenuOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isUserMenuOpen]);
 
     const navLinks = [
         { label: 'Anasayfa', href: '/' },
@@ -65,9 +90,59 @@ const Header = () => {
                         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     </div>
 
-                    <Link href="/login" className="p-2 hover:bg-secondary/5 rounded-full transition-colors">
-                        <User className="w-5 h-5 text-secondary" />
-                    </Link>
+                    <div className="relative" ref={userMenuRef}>
+                        <button
+                            onClick={() => user ? setIsUserMenuOpen(!isUserMenuOpen) : router.push('/login')}
+                            className="p-2 hover:bg-secondary/5 rounded-full transition-colors flex items-center gap-2"
+                        >
+                            <User className={`w-5 h-5 ${user ? 'text-primary' : 'text-secondary'}`} />
+                            {user && (
+                                <span className="hidden sm:block text-[11px] font-bold text-secondary uppercase tracking-wider">
+                                    {user.firstName} {user.lastName}
+                                </span>
+                            )}
+                        </button>
+
+                        {/* User Dropdown */}
+                        {isUserMenuOpen && user && (
+                            <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-100 rounded-sm shadow-2xl py-2 animate-in fade-in zoom-in duration-200">
+                                <div className="px-4 py-3 border-b border-gray-50 mb-1 bg-gray-50/50">
+                                    <p className="text-[10px] text-gray-400 uppercase font-black mb-1">Hesabım</p>
+                                    <p className="text-sm font-black truncate text-secondary uppercase">
+                                        {user.firstName} {user.lastName}
+                                    </p>
+                                </div>
+                                <Link
+                                    href="/profile"
+                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
+                                    onClick={() => setIsUserMenuOpen(false)}
+                                >
+                                    <User className="w-4 h-4" />
+                                    Profilim
+                                </Link>
+                                <Link
+                                    href="/profile"
+                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
+                                    onClick={() => setIsUserMenuOpen(false)}
+                                >
+                                    <Package className="w-4 h-4" />
+                                    Siparişlerim
+                                </Link>
+                                <div className="h-px bg-gray-50 my-1 mx-2" />
+                                <button
+                                    onClick={() => {
+                                        logout();
+                                        setIsUserMenuOpen(false);
+                                        router.push('/');
+                                    }}
+                                    className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors"
+                                >
+                                    <LogOut className="w-4 h-4" />
+                                    Çıkış Yap
+                                </button>
+                            </div>
+                        )}
+                    </div>
 
                     <Link href="/cart" className="p-2 hover:bg-secondary/5 rounded-full transition-colors relative group">
                         <ShoppingBag className="w-5 h-5 text-secondary" />
@@ -114,13 +189,38 @@ const Header = () => {
                                     {label}
                                 </Link>
                             ))}
-                            <Link
-                                href="/login"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className="block text-xl font-serif font-bold text-secondary hover:text-primary transition-colors border-b border-gray-50 pb-4"
-                            >
-                                Giriş Yap
-                            </Link>
+                            {user ? (
+                                <>
+                                    <div className="border-b border-gray-50 pb-4 mb-4">
+                                        <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Hesabım</p>
+                                        <p className="text-xl font-serif font-black text-secondary">{user.firstName} {user.lastName}</p>
+                                    </div>
+                                    <Link
+                                        href="/profile"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className="block text-lg font-serif font-bold text-secondary hover:text-primary transition-colors border-b border-gray-50 pb-4"
+                                    >
+                                        Siparişlerim & Profil
+                                    </Link>
+                                    <button
+                                        onClick={() => {
+                                            logout();
+                                            setIsMobileMenuOpen(false);
+                                        }}
+                                        className="block w-full text-left text-lg font-serif font-bold text-red-600 hover:text-red-700 transition-colors border-b border-gray-50 pb-4 pt-4"
+                                    >
+                                        Güvenli Çıkış
+                                    </button>
+                                </>
+                            ) : (
+                                <Link
+                                    href="/login"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="block text-xl font-serif font-bold text-secondary hover:text-primary transition-colors border-b border-gray-50 pb-4"
+                                >
+                                    Giriş Yap
+                                </Link>
+                            )}
                         </nav>
                     </div>
                 </div>

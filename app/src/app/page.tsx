@@ -60,42 +60,43 @@ export default function Home() {
       {/* Featured Collections */}
       <section className="bg-secondary/5 py-20">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="relative aspect-[4/5] group overflow-hidden cursor-pointer">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            {/* Bridal Collection */}
+            <div className="relative aspect-[4/5] lg:aspect-[3/4] group overflow-hidden cursor-pointer shadow-2xl">
               <img
                 src="https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&q=80&w=1000"
                 alt="Gelin Koleksiyonu"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-                <span className="text-sm font-bold tracking-widest uppercase mb-2">Ölümsüz Aşk</span>
-                <h3 className="text-4xl font-serif">Gelin Koleksiyonu</h3>
-                <Link href="/products?category=Rings" className="mt-6 border-b border-white pb-1 hover:text-primary hover:border-primary transition-colors">Şimdi Alışveriş Yap</Link>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+              <div className="absolute inset-x-0 bottom-0 p-12 text-center text-white">
+                <span className="text-sm font-bold tracking-[0.4em] uppercase mb-4 block animate-fade-in">Ölümsüz Aşk</span>
+                <h3 className="text-4xl md:text-5xl font-serif mb-6">Gelin Koleksiyonu</h3>
+                <Link
+                  href="/products?category=Rings"
+                  className="inline-block border border-white px-8 py-3 text-sm font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300"
+                >
+                  Koleksiyonu Keşfet
+                </Link>
               </div>
             </div>
-            <div className="space-y-8">
-              <div className="relative aspect-[16/9] group overflow-hidden cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1515562141207-7a88fb052254?auto=format&fit=crop&q=80&w=1000"
-                  alt="Günlük Lüks"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
-                <div className="absolute bottom-8 left-8 text-white">
-                  <h3 className="text-2xl font-serif mb-2">Günlük Lüks</h3>
-                  <Link href="/products?category=Necklaces" className="text-sm font-bold tracking-wider uppercase flex items-center gap-2 hover:text-primary transition-colors">
-                    Keşfet <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
-              <div className="bg-white p-12 text-center border border-primary/10 h-full flex flex-col justify-center items-center">
-                <h3 className="text-3xl font-serif mb-4 text-foreground">Özel Tasarım Servisi</h3>
-                <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
-                  Hayalinizdeki mücevheri gerçeğe dönüştürün. Usta zanaatkarlarımızla size özel tasarımlar yapın.
-                </p>
-                <Link href="/about" className="bg-secondary text-secondary-foreground px-6 py-3 text-sm font-bold uppercase tracking-wider hover:bg-secondary/90 transition-colors">
-                  Randevu Al
+
+            {/* Everyday Luxury */}
+            <div className="relative aspect-[4/5] lg:aspect-[3/4] group overflow-hidden cursor-pointer shadow-2xl">
+              <img
+                src="/images/collections/everyday_luxury.png"
+                alt="Günlük Lüks"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+              <div className="absolute inset-x-0 bottom-0 p-12 text-center text-white">
+                <span className="text-sm font-bold tracking-[0.4em] uppercase mb-4 block animate-fade-in">Modern Zarafet</span>
+                <h3 className="text-4xl md:text-5xl font-serif mb-6">Günlük Lüks</h3>
+                <Link
+                  href="/products?category=Necklaces"
+                  className="inline-block border border-white px-8 py-3 text-sm font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300"
+                >
+                  Koleksiyonu Keşfet
                 </Link>
               </div>
             </div>

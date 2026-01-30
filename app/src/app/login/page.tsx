@@ -4,17 +4,36 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Diamond } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function CustomerLoginPage() {
     const router = useRouter();
+    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Mock login for now
-        alert('Giriş başarılı! (Demo)');
-        router.push('/');
+
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.error || 'Giriş yapılamadı.');
+                return;
+            }
+
+            login(data.user);
+            router.push('/');
+        } catch (error) {
+            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+        }
     };
 
     return (

@@ -4,9 +4,20 @@ import { Product } from '@/data/products';
 
 const DB_PATH = path.join(process.cwd(), 'src/data/data.json');
 
+export interface User {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    role: 'customer' | 'admin';
+    createdAt: string;
+}
+
 export interface Database {
     products: Product[];
     orders: any[];
+    users: User[];
     settings: {
         siteTitle: string;
         founderName: string;
@@ -23,6 +34,7 @@ async function initDB() {
         const initialData: Database = {
             products: [],
             orders: [],
+            users: [],
             settings: {
                 siteTitle: 'AVCI Kuyumculuk',
                 founderName: 'Aykal Avcı',
@@ -113,6 +125,30 @@ export async function updateSettings(updates: Partial<Database['settings']>) {
     db.settings = { ...db.settings, ...updates };
     await writeDB(db);
     return db.settings;
+}
+
+// User Operations
+export async function getUsers() {
+    const db = await readDB();
+    return db.users || [];
+}
+
+export async function addUser(user: Omit<User, 'id' | 'createdAt'>) {
+    const db = await readDB();
+    if (!db.users) db.users = [];
+    const newUser: User = {
+        ...user,
+        id: Math.random().toString(36).substr(2, 9),
+        createdAt: new Date().toISOString()
+    };
+    db.users.push(newUser);
+    await writeDB(db);
+    return newUser;
+}
+
+export async function findUserByEmail(email: string) {
+    const db = await readDB();
+    return (db.users || []).find(u => u.email === email);
 }
 
 export { readDB };

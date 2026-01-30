@@ -1,11 +1,15 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 import { useSettings } from '@/context/SettingsContext';
 
 const Footer = () => {
+    const pathname = usePathname();
     const { siteTitle, footerText } = useSettings();
+
+    if (pathname.startsWith('/admin')) return null;
 
     return (
         <footer className="bg-secondary text-secondary-foreground pt-16 pb-8">
