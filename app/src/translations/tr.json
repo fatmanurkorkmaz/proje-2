@@ -1,0 +1,112 @@
+{
+    "nav": {
+        "home": "Anasayfa",
+        "collections": "Koleksiyonlar",
+        "about": "Hakkımızda",
+        "login": "Giriş Yap",
+        "register": "Üye Ol",
+        "profile": "Profilim",
+        "orders": "Siparişlerim",
+        "logout": "Güvenli Çıkış",
+        "admin": "Admin Paneli",
+        "search": "Ara..."
+    },
+    "hero": {
+        "new_collection": "YENİ KOLEKSİYON",
+        "title": "Kendi Tarzınızda\nMükemmel Zarafet",
+        "subtitle": "Avcı Kuyumculuk'u keşfedin. Modern kadın için tasarlanmış, geleneksel işçilikle üretilmiş mücevherler.",
+        "cta": "Koleksiyonu Keşfet"
+    },
+    "sections": {
+        "new_arrivals": "Yeni Gelenler",
+        "new_arrivals_sub": "En yeni ve en özel parçalarımızı keşfedin.",
+        "view_all": "Tümünü Gör",
+        "bridal_title": "Gelin Koleksiyonu",
+        "bridal_tag": "Ölümsüz Aşk",
+        "everyday_title": "Günlük Lüks",
+        "everyday_tag": "Modern Zarafet",
+        "discover": "Keşfet",
+        "shop_now": "Koleksiyonu Keşfet",
+        "newsletter_title": "AVCI Kuyumculuk Dünyasına Katılın",
+        "newsletter_sub": "Yeni koleksiyonlar, özel etkinlikler ve stil önerilerinden ilk siz haberdar olun.",
+        "newsletter_placeholder": "E-posta adresiniz",
+        "newsletter_button": "Abone Ol"
+    },
+    "cart": {
+        "title": "Alışveriş Sepeti",
+        "empty": "Sepetiniz boş",
+        "total": "Toplam",
+        "checkout": "Ödeme Yap",
+        "add": "Sepete Ekle"
+    },
+    "about": {
+        "hero": {
+            "tag": "Hikayemiz",
+            "title": "Babadan Kalma Zanaat",
+            "subtitle": "1995'ten beri en saf malzemeleri kalıcı anılara dönüştürüyoruz."
+        },
+        "story": {
+            "title": "Başlangıç",
+            "p1": "Yolculuğumuz Kapalıçarşı'nın kalbindeki küçük bir atölyede başladı. Kurucumuz Aykal Avcı, ilk yüzüğünü basit bir inançla dövdü: Mücevher sadece bir süs değil, anlatılmamış bir hikaye olmalıydı.",
+            "p2": "Otuz yıl sonra, bu inancımızı her parçada sürdürüyoruz. İlhamdan cilalı taşa kadar her adım, geleneğe ve sanata bir övgüdür. Seri üretim dünyasında, yavaş ve düşünceli zanaatın gücünü seçiyoruz.",
+            "founder": "Aykal Avcı, Kurucu"
+        },
+        "values": {
+            "title": "Değerlerimiz",
+            "ethics": {
+                "title": "Etik Tedarik",
+                "desc": "Çatışmasız elmaslar ve %100 geri dönüştürülmüş altın kullanmaya kararlıyız. Gezegen bizim ilham kaynağımızdır."
+            },
+            "craft": {
+                "title": "El Yapımı Ustalık",
+                "desc": "Her parça usta zanaatkarlarımız tarafından elle tamamlanır, hiçbir makinenin taklit edemeyeceği bir kalite sağlar."
+            },
+            "custom": {
+                "title": "Size Özel",
+                "desc": "İster bir kazıma ister tamamen özel bir tasarım olsun, hikayenize uyan parçaları yaratmayı seviyoruz."
+            }
+        },
+        "visit": {
+            "title": "Ziyaret Edin",
+            "desc": "Showroom'umuz, sizi koleksiyonlarımızı yakından görmeye ve tasarımcılarımızla görüşmeye davet ediyor.",
+            "store": "Nişantaşı Mağazası",
+            "hours": "Pzt-Cmt: 10:00 - 19:00"
+        }
+    },
+    "products": {
+        "breadcrumb": "Anasayfa > Özel Koleksiyon",
+        "title": "Özel Mücevher Koleksiyonu",
+        "stats": "{count} parça, sonsuzluk için tasarlandı.",
+        "filters": {
+            "categories": "Kategoriler",
+            "all": "Tüm Koleksiyonlar",
+            "materials": "Materyal",
+            "price": "Fiyat Aralığı",
+            "apply": "Filtreleri Uygula",
+            "mobile_btn": "Filtreler"
+        },
+        "sort": {
+            "label": "Sırala:",
+            "bestsellers": "En Çok Satanlar",
+            "price_low": "Fiyat: Düşükten Yükseğe",
+            "price_high": "Fiyat: Yüksekten Düşüğe",
+            "newest": "En Yeniler"
+        },
+        "no_results": "Kriterlerinize uygun ürün bulunamadı.",
+        "clear_all": "Tüm filtreleri temizle"
+    },
+    "db": {
+        "categories": {
+            "Rings": "Yüzükler",
+            "Necklaces": "Kolyeler",
+            "Bracelets": "Bileklikler",
+            "Earrings": "Küpeler"
+        },
+        "materials": {
+            "Yellow Gold": "Sarı Altın",
+            "White Gold": "Beyaz Altın",
+            "Rose Gold": "Rose Altın",
+            "Silver": "Gümüş"
+        }
+    }
+}

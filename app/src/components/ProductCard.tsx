@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface Product {
     id: string;
@@ -18,6 +19,7 @@ interface Product {
 
 const ProductCard = ({ product }: { product: Product }) => {
     const { addToCart } = useCart();
+    const { t } = useLanguage();
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -29,7 +31,7 @@ const ProductCard = ({ product }: { product: Product }) => {
             <div className="relative aspect-square overflow-hidden bg-secondary/5 mb-4">
                 {product.isNew && (
                     <span className="absolute top-2 left-2 z-10 bg-primary text-primary-foreground text-[10px] font-bold px-3 py-1 uppercase tracking-wider">
-                        Sınırlı Üretim
+                        {t('sections.new_arrivals')}
                     </span>
                 )}
                 <Link href={`/products/${product.id}`}>
@@ -42,7 +44,7 @@ const ProductCard = ({ product }: { product: Product }) => {
             </div>
 
             <div className="flex flex-col flex-1 space-y-2">
-                <span className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground">{product.category}</span>
+                <span className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground">{t(`db.categories.${product.category}`)}</span>
                 <h3 className="text-base font-serif font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
                     <Link href={`/products/${product.id}`}>
                         {product.name}
@@ -54,7 +56,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                     onClick={handleAddToCart}
                     className="mt-auto w-full flex items-center justify-center gap-2 bg-secondary/5 hover:bg-primary hover:text-primary-foreground text-secondary font-medium py-3 rounded-sm transition-all duration-300 cursor-pointer"
                 >
-                    <ShoppingCart className="w-4 h-4" /> Sepete Ekle
+                    <ShoppingCart className="w-4 h-4" /> {t('cart.add')}
                 </button>
             </div>
         </div>

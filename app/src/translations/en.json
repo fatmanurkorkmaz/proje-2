@@ -1,0 +1,112 @@
+{
+    "nav": {
+        "home": "Home",
+        "collections": "Collections",
+        "about": "About Us",
+        "login": "Login",
+        "register": "Register",
+        "profile": "My Profile",
+        "orders": "My Orders",
+        "logout": "Logout",
+        "admin": "Admin Panel",
+        "search": "Search..."
+    },
+    "hero": {
+        "new_collection": "NEW COLLECTION",
+        "title": "Perfect Elegance\nIn Your Own Style",
+        "subtitle": "Discover Avcı Jewelry. Jewelry designed for the modern woman, crafted with traditional craftsmanship.",
+        "cta": "Explore Collection"
+    },
+    "sections": {
+        "new_arrivals": "New Arrivals",
+        "new_arrivals_sub": "Discover our newest and most exclusive pieces.",
+        "view_all": "View All",
+        "bridal_title": "Bridal Collection",
+        "bridal_tag": "Eternal Love",
+        "everyday_title": "Everyday Luxury",
+        "everyday_tag": "Modern Elegance",
+        "discover": "Explore",
+        "shop_now": "Explore Collection",
+        "newsletter_title": "Join the AVCI Jewelry World",
+        "newsletter_sub": "Be the first to hear about new collections, special events, and style tips.",
+        "newsletter_placeholder": "Your email address",
+        "newsletter_button": "Subscribe"
+    },
+    "cart": {
+        "title": "Shopping Cart",
+        "empty": "Your cart is empty",
+        "total": "Total",
+        "checkout": "Checkout",
+        "add": "Add to Cart"
+    },
+    "about": {
+        "hero": {
+            "tag": "Our Story",
+            "title": "Heritage Craftsmanship",
+            "subtitle": "Transforming the purest materials into lasting memories since 1995."
+        },
+        "story": {
+            "title": "The Beginning",
+            "p1": "Our journey began in a small workshop in the heart of the Grand Bazaar. Our founder, Aykal Avcı, forged his first ring with a simple belief: Jewelry should not just be an ornament, but an untold story.",
+            "p2": "Thirty years later, we carry this belief in every piece. Every step, from inspiration to the polished stone, is a tribute to tradition and art. In a world of mass production, we choose the power of slow and thoughtful craftsmanship.",
+            "founder": "Aykal Avcı, Founder"
+        },
+        "values": {
+            "title": "Our Values",
+            "ethics": {
+                "title": "Ethical Sourcing",
+                "desc": "We are committed to using conflict-free diamonds and 100% recycled gold. The planet is our inspiration."
+            },
+            "craft": {
+                "title": "Handmade Craftsmanship",
+                "desc": "Each piece is finished by hand by our master craftsmen, ensuring a quality no machine can replicate."
+            },
+            "custom": {
+                "title": "Bespoke for You",
+                "desc": "Whether it's an engraving or a completely custom design, we love creating pieces that fit your story."
+            }
+        },
+        "visit": {
+            "title": "Visit Us",
+            "desc": "Our showroom invites you to see our collections up close and meet with our designers.",
+            "store": "Nişantaşı Store",
+            "hours": "Mon-Sat: 10:00 - 19:00"
+        }
+    },
+    "products": {
+        "breadcrumb": "Home > Private Collection",
+        "title": "Exclusive Jewelry Collection",
+        "stats": "{count} pieces, designed for eternity.",
+        "filters": {
+            "categories": "Categories",
+            "all": "All Collections",
+            "materials": "Material",
+            "price": "Price Range",
+            "apply": "Apply Filters",
+            "mobile_btn": "Filters"
+        },
+        "sort": {
+            "label": "Sort By:",
+            "bestsellers": "Best Sellers",
+            "price_low": "Price: Low to High",
+            "price_high": "Price: High to Low",
+            "newest": "Newest"
+        },
+        "no_results": "No products found matching your criteria.",
+        "clear_all": "Clear all filters"
+    },
+    "db": {
+        "categories": {
+            "Rings": "Rings",
+            "Necklaces": "Necklaces",
+            "Bracelets": "Bracelets",
+            "Earrings": "Earrings"
+        },
+        "materials": {
+            "Yellow Gold": "Yellow Gold",
+            "White Gold": "White Gold",
+            "Rose Gold": "Rose Gold",
+            "Silver": "Silver"
+        }
+    }
+}

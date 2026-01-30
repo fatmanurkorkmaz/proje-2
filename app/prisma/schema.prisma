@@ -1,0 +1,61 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String   @unique
+  password  String
+  role      String   @default("customer")
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String   @db.Text
+  price       Float
+  image       String
+  category    String
+  isNew       Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  items       OrderItem[]
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id])
+  customer    Json        // Fallback for guest orders or quick access
+  total       Float
+  status      String      @default("pending")
+  items       OrderItem[]
+  createdAt   DateTime    @default(now())
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+}
+
+model Settings {
+  id           Int     @id @default(1)
+  siteTitle    String  @default("AVCI Kuyumculuk")
+  founderName  String  @default("Aykal Avcı")
+  footerText   String  @default("1995'ten beri zamansız hikayeler işliyoruz.")
+  contactEmail String  @default("hello@avcijewelry.com")
+}

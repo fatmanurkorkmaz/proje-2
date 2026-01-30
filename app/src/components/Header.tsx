@@ -7,40 +7,47 @@ import { Search, ShoppingBag, User, Menu, X, LogOut, Package } from 'lucide-reac
 import { useCart } from '@/context/CartContext';
 import { useSettings } from '@/context/SettingsContext';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 const Header = () => {
     const pathname = usePathname();
     const router = useRouter();
     const { items } = useCart();
+    const { t, locale, setLocale } = useLanguage();
 
     if (pathname.startsWith('/admin')) return null;
     const { user, logout } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
     const userMenuRef = useRef<HTMLDivElement>(null);
+    const langMenuRef = useRef<HTMLDivElement>(null);
     const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
-    // Click outside handler
+    // Click outside handler for both menus
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
                 setIsUserMenuOpen(false);
             }
+            if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
+                setIsLangMenuOpen(false);
+            }
         };
 
-        if (isUserMenuOpen) {
+        if (isUserMenuOpen || isLangMenuOpen) {
             document.addEventListener('mousedown', handleClickOutside);
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [isUserMenuOpen]);
+    }, [isUserMenuOpen, isLangMenuOpen]);
 
     const navLinks = [
-        { label: 'Anasayfa', href: '/' },
-        { label: 'Koleksiyonlar', href: '/products' },
-        { label: 'Hakkımızda', href: '/about' },
+        { label: t('nav.home'), href: '/' },
+        { label: t('nav.collections'), href: '/products' },
+        { label: t('nav.about'), href: '/about' },
     ];
 
     return (
@@ -84,10 +91,45 @@ const Header = () => {
                     <div className="relative hidden lg:block">
                         <input
                             type="text"
-                            placeholder="Ara..."
-                            className="pl-9 pr-4 py-2 bg-secondary/5 border-none rounded-full text-sm focus:ring-1 focus:ring-primary outline-none w-40 transition-all focus:w-56"
+                            placeholder={t('nav.search')}
+                            className="pl-9 pr-4 py-2 bg-secondary/5 border-none rounded-full text-sm focus:ring-1 focus:ring-primary outline-none w-32 xl:w-40 transition-all focus:w-48 xl:focus:w-56"
                         />
                         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    </div>
+
+                    {/* Language Switcher */}
+                    <div className="relative" ref={langMenuRef}>
+                        <button
+                            onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                            className="flex items-center gap-2 px-2 py-1.5 hover:bg-secondary/5 rounded-full transition-colors"
+                        >
+                            <span className="text-lg">
+                                {locale === 'tr' ? '🇹🇷' : '🇺🇸'}
+                            </span>
+                        </button>
+
+                        {isLangMenuOpen && (
+                            <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-100 rounded-sm shadow-2xl py-1 z-[60] animate-in fade-in zoom-in duration-200">
+                                <button
+                                    onClick={() => {
+                                        setLocale('tr');
+                                        setIsLangMenuOpen(false);
+                                    }}
+                                    className={`w-full flex items-center gap-3 px-4 py-2 text-xs font-bold transition-colors ${locale === 'tr' ? 'text-primary bg-primary/5' : 'text-gray-600 hover:bg-gray-50'}`}
+                                >
+                                    <span>🇹🇷</span> Türkçe
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setLocale('en');
+                                        setIsLangMenuOpen(false);
+                                    }}
+                                    className={`w-full flex items-center gap-3 px-4 py-2 text-xs font-bold transition-colors ${locale === 'en' ? 'text-primary bg-primary/5' : 'text-gray-600 hover:bg-gray-50'}`}
+                                >
+                                    <span>🇺🇸</span> English
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     <div className="relative" ref={userMenuRef}>
@@ -105,9 +147,9 @@ const Header = () => {
 
                         {/* User Dropdown */}
                         {isUserMenuOpen && user && (
-                            <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-100 rounded-sm shadow-2xl py-2 animate-in fade-in zoom-in duration-200">
+                            <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-100 rounded-sm shadow-2xl py-2 animate-in fade-in zoom-in duration-200 z-[60]">
                                 <div className="px-4 py-3 border-b border-gray-50 mb-1 bg-gray-50/50">
-                                    <p className="text-[10px] text-gray-400 uppercase font-black mb-1">Hesabım</p>
+                                    <p className="text-[10px] text-gray-400 uppercase font-black mb-1">{t('nav.admin')}</p>
                                     <p className="text-sm font-black truncate text-secondary uppercase">
                                         {user.firstName} {user.lastName}
                                     </p>
@@ -118,7 +160,7 @@ const Header = () => {
                                     onClick={() => setIsUserMenuOpen(false)}
                                 >
                                     <User className="w-4 h-4" />
-                                    Profilim
+                                    {t('nav.profile')}
                                 </Link>
                                 <Link
                                     href="/profile"
@@ -126,7 +168,7 @@ const Header = () => {
                                     onClick={() => setIsUserMenuOpen(false)}
                                 >
                                     <Package className="w-4 h-4" />
-                                    Siparişlerim
+                                    {t('nav.orders')}
                                 </Link>
                                 <div className="h-px bg-gray-50 my-1 mx-2" />
                                 <button
@@ -138,7 +180,7 @@ const Header = () => {
                                     className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors"
                                 >
                                     <LogOut className="w-4 h-4" />
-                                    Çıkış Yap
+                                    {t('nav.logout')}
                                 </button>
                             </div>
                         )}
@@ -162,7 +204,7 @@ const Header = () => {
                         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
                         onClick={() => setIsMobileMenuOpen(false)}
                     />
-                    <div className="absolute top-0 left-0 bottom-0 w-4/5 max-w-sm bg-background shadow-2xl animate-in slide-in-from-left duration-300">
+                    <div className="absolute top-0 left-0 bottom-0 w-4/5 max-w-sm bg-background shadow-2xl animate-in slide-in-from-left duration-300 flex flex-col">
                         <div className="p-6 border-b border-gray-100 flex items-center justify-between">
                             <Link href="/" className="flex items-center gap-3 group">
                                 <img src="/logo.png" alt="Logo" className="h-12 w-auto object-contain" />
@@ -178,7 +220,23 @@ const Header = () => {
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
-                        <nav className="p-6 space-y-4">
+                        <nav className="p-6 space-y-4 flex-1 overflow-y-auto">
+                            {/* Language in Mobile Menu */}
+                            <div className="flex gap-4 mb-8">
+                                <button
+                                    onClick={() => setLocale('tr')}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg border ${locale === 'tr' ? 'bg-primary/5 border-primary text-primary font-bold' : 'border-gray-100 text-gray-500'}`}
+                                >
+                                    <span>🇹🇷</span> Türkçe
+                                </button>
+                                <button
+                                    onClick={() => setLocale('en')}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg border ${locale === 'en' ? 'bg-primary/5 border-primary text-primary font-bold' : 'border-gray-100 text-gray-500'}`}
+                                >
+                                    <span>🇺🇸</span> English
+                                </button>
+                            </div>
+
                             {navLinks.map(({ label, href }) => (
                                 <Link
                                     key={label}
@@ -192,7 +250,7 @@ const Header = () => {
                             {user ? (
                                 <>
                                     <div className="border-b border-gray-50 pb-4 mb-4">
-                                        <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Hesabım</p>
+                                        <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">{t('nav.profile')}</p>
                                         <p className="text-xl font-serif font-black text-secondary">{user.firstName} {user.lastName}</p>
                                     </div>
                                     <Link
@@ -200,7 +258,7 @@ const Header = () => {
                                         onClick={() => setIsMobileMenuOpen(false)}
                                         className="block text-lg font-serif font-bold text-secondary hover:text-primary transition-colors border-b border-gray-50 pb-4"
                                     >
-                                        Siparişlerim & Profil
+                                        {t('nav.orders')} & {t('nav.profile')}
                                     </Link>
                                     <button
                                         onClick={() => {
@@ -209,7 +267,7 @@ const Header = () => {
                                         }}
                                         className="block w-full text-left text-lg font-serif font-bold text-red-600 hover:text-red-700 transition-colors border-b border-gray-50 pb-4 pt-4"
                                     >
-                                        Güvenli Çıkış
+                                        {t('nav.logout')}
                                     </button>
                                 </>
                             ) : (
@@ -218,7 +276,7 @@ const Header = () => {
                                     onClick={() => setIsMobileMenuOpen(false)}
                                     className="block text-xl font-serif font-bold text-secondary hover:text-primary transition-colors border-b border-gray-50 pb-4"
                                 >
-                                    Giriş Yap
+                                    {t('nav.login')}
                                 </Link>
                             )}
                         </nav>

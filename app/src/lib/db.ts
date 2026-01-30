@@ -1,154 +1,197 @@
+import { prisma } from './prisma';
 import fs from 'fs/promises';
 import path from 'path';
-import { Product } from '@/data/products';
 
 const DB_PATH = path.join(process.cwd(), 'src/data/data.json');
 
-export interface User {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    role: 'customer' | 'admin';
-    createdAt: string;
-}
-
-export interface Database {
-    products: Product[];
-    orders: any[];
-    users: User[];
-    settings: {
-        siteTitle: string;
-        founderName: string;
-        footerText: string;
-        contactEmail: string;
-    };
-}
-
-// Initialize DB if not exists
-async function initDB() {
+// Migrate JSON to MySQL if needed
+export async function migrateJsonToSql() {
     try {
-        await fs.access(DB_PATH);
-    } catch {
-        const initialData: Database = {
-            products: [],
-            orders: [],
-            users: [],
-            settings: {
-                siteTitle: 'AVCI Kuyumculuk',
-                founderName: 'Aykal Avcı',
-                footerText: '1995\'ten beri zamansız hikayeler işliyoruz.',
-                contactEmail: 'hello@avcijewelry.com'
+        const userCount = await prisma.user.count();
+        if (userCount > 0) return; // Already migrated or populated
+
+        const dataExists = await fs.access(DB_PATH).then(() => true).catch(() => false);
+        if (!dataExists) return;
+
+        console.log('Migrating data.json to MySQL...');
+        const data = JSON.parse(await fs.readFile(DB_PATH, 'utf-8'));
+
+        // Migrate Settings
+        if (data.settings) {
+            await prisma.settings.upsert({
+                where: { id: 1 },
+                update: data.settings,
+                create: { id: 1, ...data.settings }
+            });
+        }
+
+        // Migrate Users
+        if (data.users && data.users.length > 0) {
+            for (const user of data.users) {
+                await prisma.user.upsert({
+                    where: { email: user.email },
+                    update: {},
+                    create: {
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        email: user.email,
+                        password: user.password,
+                        role: user.role,
+                        createdAt: new Date(user.createdAt)
+                    }
+                });
             }
-        };
-        await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
-        await fs.writeFile(DB_PATH, JSON.stringify(initialData, null, 2));
+        }
+
+        // Migrate Products
+        if (data.products && data.products.length > 0) {
+            for (const product of data.products) {
+                await prisma.product.create({
+                    data: {
+                        name: product.name,
+                        description: product.description,
+                        price: product.price,
+                        image: product.image,
+                        category: product.category,
+                        isNew: product.isNew
+                    }
+                });
+            }
+        }
+
+        // Migrate Orders
+        if (data.orders && data.orders.length > 0) {
+            for (const order of data.orders) {
+                const user = await prisma.user.findUnique({ where: { email: order.customer.email } });
+                await prisma.order.create({
+                    data: {
+                        userId: user?.id || null,
+                        customer: order.customer,
+                        total: order.total,
+                        status: order.status || 'pending',
+                        createdAt: new Date(order.date || Date.now()),
+                        items: {
+                            create: order.items.map((item: any) => ({
+                                productId: item.id,
+                                quantity: item.quantity,
+                                price: item.price
+                            }))
+                        }
+                    }
+                });
+            }
+        }
+
+        console.log('Migration completed successfully.');
+    } catch (error) {
+        console.error('Migration failed:', error);
     }
-}
-
-async function readDB(): Promise<Database> {
-    await initDB();
-    const data = await fs.readFile(DB_PATH, 'utf-8');
-    const json = JSON.parse(data);
-
-    // Migration: Add settings if missing
-    if (!json.settings) {
-        json.settings = {
-            siteTitle: 'Avcı Jewelry',
-            founderName: 'Aykal Avcı',
-            footerText: '1995\'ten beri zamansız hikayeler işliyoruz.',
-            contactEmail: 'hello@avcijewelry.com'
-        };
-        await writeDB(json);
-    }
-
-    return json;
-}
-
-async function writeDB(data: Database) {
-    await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2));
 }
 
 // Product Operations
 export async function getProducts() {
-    const db = await readDB();
-    return db.products;
+    return prisma.product.findMany({
+        orderBy: { createdAt: 'desc' }
+    });
 }
 
 export async function getProduct(id: string) {
-    const db = await readDB();
-    return db.products.find(p => p.id === id);
+    return prisma.product.findUnique({
+        where: { id }
+    });
 }
 
-export async function addProduct(product: Product) {
-    const db = await readDB();
-    db.products.unshift(product);
-    await writeDB(db);
-    return product;
+export async function addProduct(product: any) {
+    return prisma.product.create({
+        data: {
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            image: product.image,
+            category: product.category,
+            isNew: product.isNew
+        }
+    });
 }
 
-export async function updateProduct(id: string, updates: Partial<Product>) {
-    const db = await readDB();
-    const index = db.products.findIndex(p => p.id === id);
-    if (index === -1) return null;
-
-    db.products[index] = { ...db.products[index], ...updates };
-    await writeDB(db);
-    return db.products[index];
+export async function updateProduct(id: string, updates: any) {
+    return prisma.product.update({
+        where: { id },
+        data: updates
+    });
 }
 
 export async function deleteProduct(id: string) {
-    const db = await readDB();
-    db.products = db.products.filter(p => p.id !== id);
-    await writeDB(db);
+    await prisma.product.delete({ where: { id } });
     return true;
 }
 
 // Order Operations
 export async function createOrder(order: any) {
-    const db = await readDB();
-    const newOrder = { id: Date.now().toString(), ...order, date: new Date().toISOString() };
-    db.orders.push(newOrder);
-    await writeDB(db);
-    return newOrder;
+    const user = await prisma.user.findUnique({ where: { email: order.customer.email } });
+    return prisma.order.create({
+        data: {
+            userId: user?.id || null,
+            customer: order.customer,
+            total: order.total,
+            status: 'pending',
+            items: {
+                create: order.items.map((item: any) => ({
+                    productId: item.id,
+                    quantity: item.quantity,
+                    price: item.price
+                }))
+            }
+        }
+    });
+}
+
+export async function getOrders() {
+    return prisma.order.findMany({
+        include: { user: true, items: { include: { product: true } } },
+        orderBy: { createdAt: 'desc' }
+    });
 }
 
 // Settings Operations
 export async function getSettings() {
-    const db = await readDB();
-    return db.settings;
+    let settings = await prisma.settings.findUnique({ where: { id: 1 } });
+    if (!settings) {
+        settings = await prisma.settings.create({
+            data: { id: 1 }
+        });
+    }
+    return settings;
 }
 
-export async function updateSettings(updates: Partial<Database['settings']>) {
-    const db = await readDB();
-    db.settings = { ...db.settings, ...updates };
-    await writeDB(db);
-    return db.settings;
+export async function updateSettings(updates: any) {
+    return prisma.settings.update({
+        where: { id: 1 },
+        data: updates
+    });
 }
 
 // User Operations
 export async function getUsers() {
-    const db = await readDB();
-    return db.users || [];
+    return prisma.user.findMany({
+        orderBy: { createdAt: 'desc' }
+    });
 }
 
-export async function addUser(user: Omit<User, 'id' | 'createdAt'>) {
-    const db = await readDB();
-    if (!db.users) db.users = [];
-    const newUser: User = {
-        ...user,
-        id: Math.random().toString(36).substr(2, 9),
-        createdAt: new Date().toISOString()
-    };
-    db.users.push(newUser);
-    await writeDB(db);
-    return newUser;
+export async function addUser(user: any) {
+    return prisma.user.create({
+        data: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            password: user.password,
+            role: user.role || 'customer'
+        }
+    });
 }
 
 export async function findUserByEmail(email: string) {
-    const db = await readDB();
-    return (db.users || []).find(u => u.email === email);
+    return prisma.user.findUnique({
+        where: { email }
+    });
 }
-
-export { readDB };
