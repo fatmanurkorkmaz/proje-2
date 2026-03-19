@@ -5,10 +5,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Diamond } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function RegisterPage() {
     const router = useRouter();
     const { login } = useAuth();
+    const { t } = useLanguage();
     const [loading, setLoading] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -26,7 +28,7 @@ export default function RegisterPage() {
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         if (formData.password !== formData.confirmPassword) {
-            alert('Şifreler eşleşmiyor!');
+            alert(t('register.password_mismatch'));
             return;
         }
 
@@ -44,11 +46,10 @@ export default function RegisterPage() {
             const data = await res.json();
 
             if (!res.ok) {
-                alert(data.error || 'Üyelik oluşturulamadı.');
+                alert(data.error || t('register.error_default'));
                 return;
             }
 
-            // Automatically login
             login({
                 firstName: data.firstName,
                 lastName: data.lastName,
@@ -57,7 +58,7 @@ export default function RegisterPage() {
             });
             router.push('/');
         } catch (error) {
-            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+            alert(t('register.error_generic'));
         } finally {
             setLoading(false);
         }
@@ -71,54 +72,54 @@ export default function RegisterPage() {
                         <Diamond className="w-7 h-7 fill-current" />
                     </div>
                     <h1 className="text-3xl font-serif font-bold text-secondary mb-2 tracking-tight">
-                        Hemen Başlayın
+                        {t('register.title')}
                     </h1>
                     <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.2em]">
-                        AVCI KUYUMCULUK AYRICALIĞI
+                        {t('register.subtitle')}
                     </p>
                 </div>
 
                 <form onSubmit={handleRegister} className="space-y-6">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Ad</label>
+                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{t('register.first_name')}</label>
                             <input
                                 type="text"
                                 name="firstName"
                                 required
                                 value={formData.firstName}
                                 onChange={handleChange}
-                                placeholder="Adınız"
+                                placeholder={t('register.first_name_placeholder')}
                                 className="w-full px-4 py-3.5 border border-gray-100 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none text-sm"
                             />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Soyad</label>
+                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{t('register.last_name')}</label>
                             <input
                                 type="text"
                                 name="lastName"
                                 required
                                 value={formData.lastName}
                                 onChange={handleChange}
-                                placeholder="Soyadınız"
+                                placeholder={t('register.last_name_placeholder')}
                                 className="w-full px-4 py-3.5 border border-gray-100 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none text-sm"
                             />
                         </div>
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">E-posta</label>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{t('register.email')}</label>
                         <input
                             type="email"
                             name="email"
                             required
                             value={formData.email}
                             onChange={handleChange}
-                            placeholder="ornek@mail.com"
+                            placeholder={t('register.email_placeholder')}
                             className="w-full px-4 py-3.5 border border-gray-100 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none text-sm"
                         />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Şifre Belirleyin</label>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{t('register.password')}</label>
                         <input
                             type="password"
                             name="password"
@@ -130,7 +131,7 @@ export default function RegisterPage() {
                         />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Şifre Tekrar</label>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{t('register.confirm_password')}</label>
                         <input
                             type="password"
                             name="confirmPassword"
@@ -146,12 +147,12 @@ export default function RegisterPage() {
                         disabled={loading}
                         className="w-full bg-secondary text-white py-4 rounded-sm font-black text-xs uppercase tracking-[0.2em] hover:bg-primary hover:text-secondary transition-all shadow-xl active:scale-[0.98] disabled:opacity-50"
                     >
-                        {loading ? 'KAYDEDİLİYOR...' : 'ÜYELİĞİ TAMAMLA'}
+                        {loading ? t('register.loading') : t('register.submit')}
                     </button>
                 </form>
 
                 <div className="mt-10 text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                    Zaten hesabınız var mı? <Link href="/login" className="text-primary hover:underline ml-1">GİRİŞ YAP</Link>
+                    {t('register.has_account')} <Link href="/login" className="text-primary hover:underline ml-1">{t('register.login_link')}</Link>
                 </div>
             </div>
         </div>

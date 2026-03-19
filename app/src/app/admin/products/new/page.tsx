@@ -2,7 +2,7 @@
 
 import { Upload, X } from 'lucide-react';
 import { useProducts } from '@/context/ProductContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function NewProductPage() {
@@ -13,7 +13,6 @@ export default function NewProductPage() {
         nameTr: '',
         nameEn: '',
         descriptionTr: '',
-        descriptionEn: '',
         price: '',
         weight: '',
         category: 'Rings',
@@ -22,11 +21,33 @@ export default function NewProductPage() {
         stock: '0'
     });
     const [uploading, setUploading] = useState(false);
+    const [goldPrice, setGoldPrice] = useState<number>(0);
+    const [goldLoading, setGoldLoading] = useState(true);
 
-    // File Upload Handler
+    // Fetch gold price on load
+    useEffect(() => {
+        fetch('/api/gold-price')
+            .then(res => res.json())
+            .then(data => {
+                setGoldPrice(data.price);
+                setGoldLoading(false);
+            })
+            .catch(() => setGoldLoading(false));
+    }, []);
+
+    // Auto-calculate price when weight changes
+    useEffect(() => {
+        if (goldPrice > 0 && formData.weight) {
+            const weight = parseFloat(formData.weight);
+            if (weight > 0) {
+                const calculatedPrice = Math.round(weight * goldPrice);
+                setFormData(prev => ({ ...prev, price: calculatedPrice.toString() }));
+            }
+        }
+    }, [formData.weight, goldPrice]);
+
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.[0]) return;
-
         setUploading(true);
         const file = e.target.files[0];
         const data = new FormData();
@@ -54,7 +75,7 @@ export default function NewProductPage() {
             nameTr: formData.nameTr,
             nameEn: formData.nameEn,
             descriptionTr: formData.descriptionTr || '',
-            descriptionEn: formData.descriptionEn || '',
+            descriptionEn: formData.descriptionTr || '', // Auto-copy from Turkish
             price: parseFloat(formData.price) || 0,
             weight: parseFloat(formData.weight) || 0,
             image: formData.image,
@@ -84,14 +105,27 @@ export default function NewProductPage() {
                 </div>
             </div>
 
+            {/* Gold Price Info */}
+            <div className="bg-amber-50 border border-amber-200 rounded-sm p-4 mb-6 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <span className="text-amber-600 text-lg">🥇</span>
+                    <div>
+                        <p className="text-xs font-black text-amber-800 uppercase tracking-widest">Anlık Has Altın Fiyatı</p>
+                        <p className="text-lg font-bold text-amber-700">
+                            {goldLoading ? 'Yükleniyor...' : `${goldPrice.toLocaleString('tr-TR')} ₺/gram`}
+                        </p>
+                    </div>
+                </div>
+                <p className="text-[10px] text-amber-600 font-medium">Fiyat gramaj girilince otomatik hesaplanır</p>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Info */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="bg-white p-6 rounded-sm border border-gray-100 shadow-sm">
                         <h3 className="font-bold text-lg mb-4 text-secondary">Ürün Detayları</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-4">
-                                <h4 className="text-xs font-black text-primary uppercase tracking-widest">Türkçe Bilgiler</h4>
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Ürün Adı (TR)</label>
                                     <input
@@ -103,19 +137,6 @@ export default function NewProductPage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Açıklama (TR)</label>
-                                    <textarea
-                                        rows={4}
-                                        value={formData.descriptionTr}
-                                        onChange={(e) => setFormData({ ...formData, descriptionTr: e.target.value })}
-                                        placeholder="Ürün açıklaması..."
-                                        className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm resize-none"
-                                    ></textarea>
-                                </div>
-                            </div>
-                            <div className="space-y-4">
-                                <h4 className="text-xs font-black text-primary uppercase tracking-widest">English Details</h4>
-                                <div>
                                     <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Product Name (EN)</label>
                                     <input
                                         type="text"
@@ -125,16 +146,16 @@ export default function NewProductPage() {
                                         className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm"
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Description (EN)</label>
-                                    <textarea
-                                        rows={4}
-                                        value={formData.descriptionEn}
-                                        onChange={(e) => setFormData({ ...formData, descriptionEn: e.target.value })}
-                                        placeholder="Product description in English..."
-                                        className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm resize-none"
-                                    ></textarea>
-                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Açıklama</label>
+                                <textarea
+                                    rows={4}
+                                    value={formData.descriptionTr}
+                                    onChange={(e) => setFormData({ ...formData, descriptionTr: e.target.value })}
+                                    placeholder="Ürün açıklaması..."
+                                    className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm resize-none"
+                                ></textarea>
                             </div>
                         </div>
                     </div>
@@ -148,7 +169,6 @@ export default function NewProductPage() {
                                 onChange={handleImageUpload}
                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                             />
-
                             {uploading ? (
                                 <p className="text-primary font-bold animate-pulse">Yükleniyor...</p>
                             ) : formData.image ? (
@@ -177,16 +197,6 @@ export default function NewProductPage() {
                         <h3 className="font-bold text-lg mb-4 text-secondary">Özellikler & Fiyat</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Satış Fiyatı (₺)</label>
-                                <input
-                                    type="number"
-                                    value={formData.price}
-                                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                    placeholder="0.00"
-                                    className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold"
-                                />
-                            </div>
-                            <div>
                                 <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Gramaj (Gram)</label>
                                 <input
                                     type="number"
@@ -196,6 +206,22 @@ export default function NewProductPage() {
                                     placeholder="0.00"
                                     className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold"
                                 />
+                                {formData.weight && goldPrice > 0 && (
+                                    <p className="text-[10px] text-amber-600 font-medium mt-1">
+                                        {formData.weight}g × {goldPrice.toLocaleString('tr-TR')} ₺ = {Math.round(parseFloat(formData.weight) * goldPrice).toLocaleString('tr-TR')} ₺
+                                    </p>
+                                )}
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Satış Fiyatı (₺)</label>
+                                <input
+                                    type="number"
+                                    value={formData.price}
+                                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                    placeholder="0.00"
+                                    className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold"
+                                />
+                                <p className="text-[10px] text-gray-400 mt-1">Otomatik hesaplanır, düzenlenebilir</p>
                             </div>
                             <div>
                                 <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Stok Miktarı</label>

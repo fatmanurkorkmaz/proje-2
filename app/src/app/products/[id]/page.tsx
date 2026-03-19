@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Check, Share2, Shield, Truck, Scale, BadgeCheck, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Check, Share2, Shield, Truck, Scale, BadgeCheck } from 'lucide-react';
 import { notFound, useParams } from 'next/navigation';
 import ProductActions from '@/components/ProductActions';
 import { useLanguage } from '@/context/LanguageContext';
@@ -152,10 +152,10 @@ export default function ProductPage() {
                                 </div>
                                 <div className="flex flex-col items-center text-center gap-3">
                                     <div className="w-10 h-10 rounded-full bg-secondary/5 flex items-center justify-center">
-                                        <RotateCcw className="w-5 h-5 text-secondary/60" />
+                                        <Shield className="w-5 h-5 text-secondary/60" />
                                     </div>
                                     <span className="text-[9px] font-black uppercase tracking-widest text-secondary/70">
-                                        {locale === 'tr' ? 'Kolay İade' : 'Easy Return'}
+                                        {locale === 'tr' ? 'Güvenli Ödeme' : 'Secure Payment'}
                                     </span>
                                 </div>
                             </div>

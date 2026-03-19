@@ -5,10 +5,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Diamond } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function CustomerLoginPage() {
     const router = useRouter();
     const { login } = useAuth();
+    const { t } = useLanguage();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -25,14 +27,14 @@ export default function CustomerLoginPage() {
             const data = await res.json();
 
             if (!res.ok) {
-                alert(data.error || 'Giriş yapılamadı.');
+                alert(data.error || t('login.error_default'));
                 return;
             }
 
             login(data.user);
             router.push('/');
         } catch (error) {
-            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+            alert(t('login.error_generic'));
         }
     };
 
@@ -43,13 +45,13 @@ export default function CustomerLoginPage() {
                     <div className="w-12 h-12 bg-secondary text-primary rounded-full flex items-center justify-center mx-auto mb-4">
                         <Diamond className="w-6 h-6 fill-current" />
                     </div>
-                    <h1 className="text-2xl font-serif font-bold text-gray-900">Müşteri Girişi</h1>
-                    <p className="text-gray-500 text-sm">Hesabınıza erişmek için giriş yapın.</p>
+                    <h1 className="text-2xl font-serif font-bold text-gray-900">{t('login.title')}</h1>
+                    <p className="text-gray-500 text-sm">{t('login.subtitle')}</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">E-posta</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">{t('login.email')}</label>
                         <input
                             type="email"
                             required
@@ -60,7 +62,7 @@ export default function CustomerLoginPage() {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Şifre</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">{t('login.password')}</label>
                         <input
                             type="password"
                             required
@@ -75,12 +77,12 @@ export default function CustomerLoginPage() {
                         type="submit"
                         className="w-full bg-primary text-secondary-foreground py-3 rounded-sm font-bold uppercase tracking-wider hover:bg-primary/90 transition-colors"
                     >
-                        Giriş Yap
+                        {t('login.submit')}
                     </button>
                 </form>
 
                 <div className="mt-8 text-center text-sm text-gray-500">
-                    Hesabınız yok mu? <Link href="/register" className="text-primary font-bold hover:underline">Üye Ol</Link>
+                    {t('login.no_account')} <Link href="/register" className="text-primary font-bold hover:underline">{t('login.register_link')}</Link>
                 </div>
             </div>
         </div>

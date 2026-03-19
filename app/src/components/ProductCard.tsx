@@ -50,7 +50,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                 )}
 
                 {product.stock > 0 && product.stock < 5 && (
-                    <span className="absolute top-4 right-4 z-10 bg-orange-500 text-white text-[8px] font-bold px-2 py-1 uppercase tracking-widest shadow-lg">
+                    <span className="absolute bottom-4 left-4 z-10 bg-orange-500 text-white text-[8px] font-bold px-2 py-1 uppercase tracking-widest shadow-lg">
                         {locale === 'tr' ? `SON ${product.stock} ADET` : `ONLY ${product.stock} LEFT`}
                     </span>
                 )}
@@ -71,7 +71,7 @@ const ProductCard = ({ product }: { product: Product }) => {
 
                 <Link href={`/products/${product.id}`} className="block w-full h-full">
                     <img
-                        src={product.image}
+                        src={product.image || 'https://placehold.co/400x400/F9F9F4/D4AF37?text=No+Image'}
                         alt={name}
                         className={`object-cover w-full h-full transition-transform duration-700 group-hover:scale-110 ${product.stock === 0 ? 'grayscale' : ''}`}
                     />

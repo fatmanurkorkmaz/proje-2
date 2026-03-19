@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useProducts } from '@/context/ProductContext';
 import ProductCard from '@/components/ProductCard';
-import { SlidersHorizontal, ChevronDown } from 'lucide-react';
+import { SlidersHorizontal, ChevronDown, X } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function ProductsPage() {
@@ -12,6 +12,8 @@ export default function ProductsPage() {
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
     const [priceRange, setPriceRange] = useState<number>(100000);
+    const [sortBy, setSortBy] = useState<string>('bestsellers');
+    const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
     const categories = ['Rings', 'Necklaces', 'Bracelets', 'Earrings'];
     const materials = ['Yellow Gold', 'White Gold', 'Rose Gold', 'Silver'];
@@ -24,12 +26,96 @@ export default function ProductsPage() {
         }
     };
 
-    const filteredProducts = products.filter((product: any) => {
-        const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(product.category);
-        const materialMatch = selectedMaterials.length === 0 || (!product.material || selectedMaterials.includes(product.material));
-        const priceMatch = product.price <= priceRange;
-        return categoryMatch && materialMatch && priceMatch;
-    });
+    const filteredProducts = products
+        .filter((product: any) => {
+            const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(product.category);
+            const materialMatch = selectedMaterials.length === 0 || (!product.material || selectedMaterials.includes(product.material));
+            const priceMatch = product.price <= priceRange;
+            return categoryMatch && materialMatch && priceMatch;
+        })
+        .sort((a: any, b: any) => {
+            switch (sortBy) {
+                case 'price_low':
+                    return a.price - b.price;
+                case 'price_high':
+                    return b.price - a.price;
+                case 'newest':
+                    return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
+                default:
+                    return 0;
+            }
+        });
+
+    const FilterSidebar = () => (
+        <div className="space-y-8">
+            {/* Categories */}
+            <div>
+                <h3 className="font-bold mb-4 flex justify-between items-center text-secondary uppercase tracking-widest text-xs">
+                    {t('products.filters.categories')} <ChevronDown className="w-4 h-4" />
+                </h3>
+                <div className="space-y-2">
+                    <label className="flex items-center gap-3 cursor-pointer group">
+                        <input
+                            type="checkbox"
+                            className="w-4 h-4 rounded-sm border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                            checked={selectedCategories.length === 0}
+                            onChange={() => setSelectedCategories([])}
+                        />
+                        <span className="text-sm font-medium text-gray-600 group-hover:text-primary transition-colors">{t('products.filters.all')}</span>
+                    </label>
+                    {categories.map(cat => (
+                        <label key={cat} className="flex items-center gap-3 cursor-pointer group">
+                            <input
+                                type="checkbox"
+                                className="w-4 h-4 rounded-sm border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                checked={selectedCategories.includes(cat)}
+                                onChange={() => toggleFilter(cat, selectedCategories, setSelectedCategories)}
+                            />
+                            <span className="text-sm font-medium text-gray-600 group-hover:text-primary transition-colors">{t(`db.categories.${cat}`)}</span>
+                        </label>
+                    ))}
+                </div>
+            </div>
+
+            {/* Materials */}
+            <div>
+                <h3 className="font-bold mb-4 flex justify-between items-center text-secondary uppercase tracking-widest text-xs">
+                    {t('products.filters.materials')} <ChevronDown className="w-4 h-4" />
+                </h3>
+                <div className="space-y-2">
+                    {materials.map(mat => (
+                        <label key={mat} className="flex items-center gap-3 cursor-pointer group">
+                            <input
+                                type="checkbox"
+                                className="w-4 h-4 rounded-sm border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                checked={selectedMaterials.includes(mat)}
+                                onChange={() => toggleFilter(mat, selectedMaterials, setSelectedMaterials)}
+                            />
+                            <span className="text-sm font-medium text-gray-600 group-hover:text-primary transition-colors">{t(`db.materials.${mat}`)}</span>
+                        </label>
+                    ))}
+                </div>
+            </div>
+
+            {/* Price Range */}
+            <div>
+                <h3 className="font-bold mb-4 text-secondary uppercase tracking-widest text-xs">{t('products.filters.price')}</h3>
+                <input
+                    type="range"
+                    min="0"
+                    max="100000"
+                    step="1000"
+                    value={priceRange}
+                    onChange={(e) => setPriceRange(Number(e.target.value))}
+                    className="w-full accent-primary cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] font-bold text-gray-400 mt-2 uppercase">
+                    <span>0₺</span>
+                    <span>{priceRange.toLocaleString()}₺+</span>
+                </div>
+            </div>
+        </div>
+    );
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -41,95 +127,59 @@ export default function ProductsPage() {
             </div>
 
             <div className="flex flex-col lg:flex-row gap-8">
-                {/* Sidebar Filters */}
-                <aside className="w-full lg:w-64 space-y-8 flex-shrink-0">
-                    {/* Categories */}
-                    <div>
-                        <h3 className="font-bold mb-4 flex justify-between items-center text-secondary uppercase tracking-widest text-xs">
-                            {t('products.filters.categories')} <ChevronDown className="w-4 h-4" />
-                        </h3>
-                        <div className="space-y-2">
-                            <label className="flex items-center gap-3 cursor-pointer group">
-                                <input
-                                    type="checkbox"
-                                    className="w-4 h-4 rounded-sm border-gray-300 text-primary focus:ring-primary cursor-pointer"
-                                    checked={selectedCategories.length === 0}
-                                    onChange={() => setSelectedCategories([])}
-                                />
-                                <span className="text-sm font-medium text-gray-600 group-hover:text-primary transition-colors">{t('products.filters.all')}</span>
-                            </label>
-                            {categories.map(cat => (
-                                <label key={cat} className="flex items-center gap-3 cursor-pointer group">
-                                    <input
-                                        type="checkbox"
-                                        className="w-4 h-4 rounded-sm border-gray-300 text-primary focus:ring-primary cursor-pointer"
-                                        checked={selectedCategories.includes(cat)}
-                                        onChange={() => toggleFilter(cat, selectedCategories, setSelectedCategories)}
-                                    />
-                                    <span className="text-sm font-medium text-gray-600 group-hover:text-primary transition-colors">{t(`db.categories.${cat}`)}</span>
-                                </label>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Materials */}
-                    <div>
-                        <h3 className="font-bold mb-4 flex justify-between items-center text-secondary uppercase tracking-widest text-xs">
-                            {t('products.filters.materials')} <ChevronDown className="w-4 h-4" />
-                        </h3>
-                        <div className="space-y-2">
-                            {materials.map(mat => (
-                                <label key={mat} className="flex items-center gap-3 cursor-pointer group">
-                                    <input
-                                        type="checkbox"
-                                        className="w-4 h-4 rounded-sm border-gray-300 text-primary focus:ring-primary cursor-pointer"
-                                        checked={selectedMaterials.includes(mat)}
-                                        onChange={() => toggleFilter(mat, selectedMaterials, setSelectedMaterials)}
-                                    />
-                                    <span className="text-sm font-medium text-gray-600 group-hover:text-primary transition-colors">{t(`db.materials.${mat}`)}</span>
-                                </label>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Price Range */}
-                    <div>
-                        <h3 className="font-bold mb-4 text-secondary uppercase tracking-widest text-xs">{t('products.filters.price')}</h3>
-                        <input
-                            type="range"
-                            min="0"
-                            max="100000"
-                            step="1000"
-                            value={priceRange}
-                            onChange={(e) => setPriceRange(Number(e.target.value))}
-                            className="w-full accent-primary cursor-pointer"
-                        />
-                        <div className="flex justify-between text-[10px] font-bold text-gray-400 mt-2 uppercase">
-                            <span>0₺</span>
-                            <span>{priceRange.toLocaleString()}₺+</span>
-                        </div>
-                    </div>
-
-                    <button
-                        className="w-full bg-secondary text-secondary-foreground py-3 font-bold uppercase tracking-widest text-xs hover:bg-secondary/90 transition-all shadow-lg hover:shadow-secondary/20"
-                    >
-                        {t('products.filters.apply')}
-                    </button>
+                {/* Desktop Sidebar Filters */}
+                <aside className="hidden lg:block w-64 flex-shrink-0">
+                    <FilterSidebar />
                 </aside>
+
+                {/* Mobile Filter Overlay */}
+                {isMobileFilterOpen && (
+                    <div className="fixed inset-0 z-[100] lg:hidden">
+                        <div
+                            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                            onClick={() => setIsMobileFilterOpen(false)}
+                        />
+                        <div className="absolute top-0 left-0 bottom-0 w-4/5 max-w-sm bg-background shadow-2xl p-6 overflow-y-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-lg font-bold font-serif">{t('products.filters.mobile_btn')}</h2>
+                                <button
+                                    onClick={() => setIsMobileFilterOpen(false)}
+                                    className="p-2 hover:bg-gray-100 rounded-full"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+                            <FilterSidebar />
+                            <button
+                                onClick={() => setIsMobileFilterOpen(false)}
+                                className="w-full mt-8 bg-secondary text-secondary-foreground py-3 font-bold uppercase tracking-widest text-xs hover:bg-secondary/90 transition-all"
+                            >
+                                {t('products.filters.apply')}
+                            </button>
+                        </div>
+                    </div>
+                )}
 
                 {/* Product Grid */}
                 <div className="flex-1">
                     <div className="flex justify-between items-center mb-6">
-                        <button className="lg:hidden flex items-center gap-2 text-xs font-bold uppercase tracking-widest border border-gray-100 px-4 py-2 hover:bg-gray-50 transition-colors">
+                        <button
+                            onClick={() => setIsMobileFilterOpen(true)}
+                            className="lg:hidden flex items-center gap-2 text-xs font-bold uppercase tracking-widest border border-gray-100 px-4 py-2 hover:bg-gray-50 transition-colors"
+                        >
                             <SlidersHorizontal className="w-4 h-4" /> {t('products.filters.mobile_btn')}
                         </button>
                         <div className="ml-auto flex items-center gap-2">
                             <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{t('products.sort.label')}</span>
-                            <select className="border-none text-xs font-bold text-secondary focus:ring-0 cursor-pointer bg-transparent uppercase tracking-widest">
-                                <option>{t('products.sort.bestsellers')}</option>
-                                <option>{t('products.sort.price_low')}</option>
-                                <option>{t('products.sort.price_high')}</option>
-                                <option>{t('products.sort.newest')}</option>
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                                className="border-none text-xs font-bold text-secondary focus:ring-0 cursor-pointer bg-transparent uppercase tracking-widest"
+                            >
+                                <option value="bestsellers">{t('products.sort.bestsellers')}</option>
+                                <option value="price_low">{t('products.sort.price_low')}</option>
+                                <option value="price_high">{t('products.sort.price_high')}</option>
+                                <option value="newest">{t('products.sort.newest')}</option>
                             </select>
                         </div>
                     </div>

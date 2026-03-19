@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F9F9F4; /* Warm off-white from design */
-  --foreground: #1A1A1A; /* Dark text */
-  --primary: #D4AF37; /* Metallic Gold */
+  --background: #F9F9F4;
+  --foreground: #1A1A1A;
+  --primary: #D4AF37;
   --primary-foreground: #FFFFFF;
-  --secondary: #1A2e1A; /* Dark Green from hero */
+  --secondary: #1A2e1A;
   --secondary-foreground: #FFFFFF;
-  
-  /* Font variables derived from layout.tsx */
+  --muted-foreground: #6B7280;
+
   --font-serif: var(--font-playfair);
   --font-sans: var(--font-inter);
 }
@@ -20,11 +20,14 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  
+  --color-muted-foreground: var(--muted-foreground);
+
   --font-sans: var(--font-sans);
   --font-serif: var(--font-serif);
-  
-  /* Add custom spacings or other design tokens as needed */
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -33,6 +36,55 @@ body {
   font-family: var(--font-sans);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-serif);
+}
+
+/* Hero animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.delay-300 {
+  animation-delay: 0.3s;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 1s ease-out forwards;
 }

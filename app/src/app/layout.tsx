@@ -9,6 +9,7 @@ import { SettingsProvider } from '@/context/SettingsContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { WishlistProvider } from '@/context/WishlistContext';
+import ScrollToTop from '@/components/ScrollToTop';
 import { migrateJsonToSql } from '@/lib/db';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -46,6 +47,7 @@ export default async function RootLayout({
                       {children}
                     </main>
                     <Footer />
+                    <ScrollToTop />
                   </CartProvider>
                 </ProductProvider>
               </WishlistProvider>

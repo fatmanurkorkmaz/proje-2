@@ -3,41 +3,23 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Diamond, Lock } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import Cookies from 'js-cookie';
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const router = useRouter();
-    const { login } = useAuth();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
 
-        try {
-            const res = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: 'admin@avcikuyumculuk.com', password }), // For now using the password field as before but logic supports full login
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                setError(data.error || 'Hatalı şifre.');
-                return;
-            }
-
-            if (data.user.role !== 'admin') {
-                setError('Bu alana sadece admin girişi yapılabilir.');
-                return;
-            }
-
-            login(data.user);
-            router.push('/admin');
-        } catch (err) {
-            setError('Bir hata oluştu.');
+        if (username === 'admin' && password === 'admin123') {
+            Cookies.set('admin_session', 'true', { expires: 1, path: '/' });
+            window.location.href = '/admin';
+        } else {
+            setError('Kullanıcı adı veya şifre hatalı.');
         }
     };
 
@@ -49,10 +31,20 @@ export default function LoginPage() {
                         <Diamond className="w-8 h-8 fill-current" />
                     </div>
                     <h1 className="text-2xl font-serif font-bold text-gray-900">Admin Girişi</h1>
-                    <p className="text-gray-500">Lütfen panele erişmek için şifrenizi girin.</p>
+                    <p className="text-gray-500">Lütfen panele erişmek için bilgilerinizi girin.</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Kullanıcı Adı</label>
+                        <input
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-200 rounded-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                            placeholder="Kullanıcı adı"
+                        />
+                    </div>
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">Şifre</label>
                         <div className="relative">
@@ -75,10 +67,6 @@ export default function LoginPage() {
                         Giriş Yap
                     </button>
                 </form>
-
-                <div className="mt-8 text-center">
-                    <p className="text-xs text-gray-400">Demo Şifre: <strong>admin</strong></p>
-                </div>
             </div>
         </div>
     );

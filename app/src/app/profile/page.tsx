@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Package, User, ShoppingBag, ChevronRight, Clock } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface Order {
     id: string;
@@ -17,6 +18,7 @@ interface Order {
 export default function ProfilePage() {
     const { user, isLoading } = useAuth();
     const router = useRouter();
+    const { t, locale } = useLanguage();
     const [orders, setOrders] = useState<Order[]>([]);
     const [activeTab, setActiveTab] = useState<'orders' | 'info'>('orders');
 
@@ -28,7 +30,6 @@ export default function ProfilePage() {
 
     useEffect(() => {
         if (user) {
-            // Fetch user's orders (Mock API call for now, can be replaced with real API)
             fetch('/api/orders?email=' + user.email)
                 .then(res => res.json())
                 .then(data => {
@@ -65,7 +66,7 @@ export default function ProfilePage() {
                         </div>
                         <div className="flex gap-4">
                             <div className="text-center px-6 py-3 bg-secondary/5 rounded-lg border border-secondary/10">
-                                <p className="text-[10px] text-gray-400 uppercase font-black mb-1">Toplam Sipariş</p>
+                                <p className="text-[10px] text-gray-400 uppercase font-black mb-1">{t('profile.total_orders')}</p>
                                 <p className="text-xl font-serif font-black text-secondary">{orders.length}</p>
                             </div>
                         </div>
@@ -80,7 +81,7 @@ export default function ProfilePage() {
                             }`}
                     >
                         <ShoppingBag className="w-4 h-4" />
-                        Siparişlerim
+                        {t('profile.tab_orders')}
                     </button>
                     <button
                         onClick={() => setActiveTab('info')}
@@ -88,7 +89,7 @@ export default function ProfilePage() {
                             }`}
                     >
                         <User className="w-4 h-4" />
-                        Profil Bilgilerim
+                        {t('profile.tab_info')}
                     </button>
                 </div>
 
@@ -104,25 +105,25 @@ export default function ProfilePage() {
                                                 <Package className="w-6 h-6" />
                                             </div>
                                             <div>
-                                                <p className="text-sm font-black text-secondary">Sipariş No: #{order.id.slice(-6)}</p>
+                                                <p className="text-sm font-black text-secondary">{t('profile.order_no')}: #{order.id.slice(-6)}</p>
                                                 <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
                                                     <Clock className="w-3 h-3" />
-                                                    {new Date(order.date).toLocaleDateString('tr-TR')}
+                                                    {new Date(order.date).toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US')}
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-8 w-full md:w-auto justify-between md:justify-end">
                                             <div className="text-right">
-                                                <p className="text-[10px] text-gray-400 uppercase font-black mb-1">Durum</p>
+                                                <p className="text-[10px] text-gray-400 uppercase font-black mb-1">{t('profile.status')}</p>
                                                 <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${order.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
                                                     }`}>
-                                                    {order.status === 'Completed' ? 'Tamamlandı' : 'Alındı'}
+                                                    {order.status === 'Completed' ? t('profile.status_completed') : t('profile.status_received')}
                                                 </span>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-[10px] text-gray-400 uppercase font-black mb-1">Toplam</p>
+                                                <p className="text-[10px] text-gray-400 uppercase font-black mb-1">{t('profile.total')}</p>
                                                 <p className="text-lg font-serif font-black text-secondary">
-                                                    {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(order.total)}
+                                                    {new Intl.NumberFormat(locale === 'tr' ? 'tr-TR' : 'en-US', { style: 'currency', currency: 'TRY' }).format(order.total)}
                                                 </p>
                                             </div>
                                             <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-primary transition-colors" />
@@ -133,36 +134,36 @@ export default function ProfilePage() {
                         ) : (
                             <div className="text-center bg-white py-16 rounded-lg border border-dashed border-gray-200">
                                 <ShoppingBag className="w-12 h-12 text-gray-200 mx-auto mb-4" />
-                                <h3 className="text-xl font-serif font-bold text-secondary mb-2">Henüz siparişiniz yok</h3>
-                                <p className="text-gray-400 mb-8">Koleksiyonlarımızı keşfederek alışverişe başlayabilirsiniz.</p>
+                                <h3 className="text-xl font-serif font-bold text-secondary mb-2">{t('profile.no_orders')}</h3>
+                                <p className="text-gray-400 mb-8">{t('profile.no_orders_sub')}</p>
                                 <button
                                     onClick={() => router.push('/products')}
                                     className="bg-primary text-secondary-foreground px-8 py-3 text-sm font-bold uppercase tracking-widest hover:bg-primary/90 transition-colors"
                                 >
-                                    Alışverişe Başla
+                                    {t('profile.start_shopping')}
                                 </button>
                             </div>
                         )}
                     </div>
                 ) : (
                     <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 max-w-2xl">
-                        <h2 className="text-xl font-serif font-bold text-secondary mb-6 border-b border-gray-100 pb-4">Kişisel Bilgiler</h2>
+                        <h2 className="text-xl font-serif font-bold text-secondary mb-6 border-b border-gray-100 pb-4">{t('profile.personal_info')}</h2>
                         <div className="grid grid-cols-2 gap-8 mb-8">
                             <div>
-                                <p className="text-[10px] text-gray-400 uppercase font-black mb-1">Adınız</p>
+                                <p className="text-[10px] text-gray-400 uppercase font-black mb-1">{t('profile.first_name')}</p>
                                 <p className="text-secondary font-bold">{user.firstName}</p>
                             </div>
                             <div>
-                                <p className="text-[10px] text-gray-400 uppercase font-black mb-1">Soyadınız</p>
+                                <p className="text-[10px] text-gray-400 uppercase font-black mb-1">{t('profile.last_name')}</p>
                                 <p className="text-secondary font-bold">{user.lastName}</p>
                             </div>
                         </div>
                         <div className="mb-8">
-                            <p className="text-[10px] text-gray-400 uppercase font-black mb-1">E-posta Adresiniz</p>
+                            <p className="text-[10px] text-gray-400 uppercase font-black mb-1">{t('profile.email')}</p>
                             <p className="text-secondary font-bold">{user.email}</p>
                         </div>
                         <button className="border border-secondary px-6 py-2 text-xs font-bold uppercase tracking-widest hover:bg-secondary hover:text-white transition-all">
-                            Bilgileri Düzenle
+                            {t('profile.edit_info')}
                         </button>
                     </div>
                 )}

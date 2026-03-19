@@ -16,7 +16,6 @@ export default function EditProductPage() {
         nameTr: '',
         nameEn: '',
         descriptionTr: '',
-        descriptionEn: '',
         price: '',
         weight: '',
         category: 'Rings',
@@ -27,6 +26,15 @@ export default function EditProductPage() {
     });
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
+    const [goldPrice, setGoldPrice] = useState<number>(0);
+    const [goldLoading, setGoldLoading] = useState(true);
+
+    useEffect(() => {
+        fetch('/api/gold-price')
+            .then(res => res.json())
+            .then(data => { setGoldPrice(data.price); setGoldLoading(false); })
+            .catch(() => setGoldLoading(false));
+    }, []);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -38,7 +46,6 @@ export default function EditProductPage() {
                         nameTr: data.nameTr || '',
                         nameEn: data.nameEn || '',
                         descriptionTr: data.descriptionTr || '',
-                        descriptionEn: data.descriptionEn || '',
                         price: data.price.toString() || '',
                         weight: data.weight?.toString() || '',
                         category: data.category || 'Rings',
@@ -54,18 +61,26 @@ export default function EditProductPage() {
                 setLoading(false);
             }
         };
-
         if (id) fetchProduct();
     }, [id]);
 
+    // Auto-calculate price when weight changes
+    useEffect(() => {
+        if (goldPrice > 0 && formData.weight && !loading) {
+            const weight = parseFloat(formData.weight);
+            if (weight > 0) {
+                const calculatedPrice = Math.round(weight * goldPrice);
+                setFormData(prev => ({ ...prev, price: calculatedPrice.toString() }));
+            }
+        }
+    }, [formData.weight, goldPrice]);
+
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.[0]) return;
-
         setUploading(true);
         const file = e.target.files[0];
         const data = new FormData();
         data.append('file', file);
-
         try {
             const res = await fetch('/api/upload', { method: 'POST', body: data });
             if (!res.ok) throw new Error('Upload failed');
@@ -86,6 +101,7 @@ export default function EditProductPage() {
 
         const updatedProduct = {
             ...formData,
+            descriptionEn: formData.descriptionTr, // Auto-copy
             price: parseFloat(formData.price),
             weight: parseFloat(formData.weight) || 0,
             stock: parseInt(formData.stock) || 0
@@ -97,7 +113,6 @@ export default function EditProductPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedProduct),
             });
-
             if (res.ok) {
                 router.push('/admin/products');
                 router.refresh();
@@ -133,53 +148,38 @@ export default function EditProductPage() {
                 </div>
             </div>
 
+            {/* Gold Price Info */}
+            <div className="bg-amber-50 border border-amber-200 rounded-sm p-4 mb-6 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <span className="text-amber-600 text-lg">🥇</span>
+                    <div>
+                        <p className="text-xs font-black text-amber-800 uppercase tracking-widest">Anlık Has Altın Fiyatı</p>
+                        <p className="text-lg font-bold text-amber-700">
+                            {goldLoading ? 'Yükleniyor...' : `${goldPrice.toLocaleString('tr-TR')} ₺/gram`}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-6">
                     {/* Basic Info */}
                     <div className="bg-white p-6 rounded-sm border border-gray-100 shadow-sm">
                         <h3 className="font-bold text-lg mb-4 text-secondary">Ürün Bilgileri</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-4">
-                                <h4 className="text-xs font-black text-primary uppercase tracking-widest">Türkçe</h4>
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">İsim</label>
-                                    <input
-                                        type="text"
-                                        value={formData.nameTr}
-                                        onChange={(e) => setFormData({ ...formData, nameTr: e.target.value })}
-                                        className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold"
-                                    />
+                                    <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">İsim (TR)</label>
+                                    <input type="text" value={formData.nameTr} onChange={(e) => setFormData({ ...formData, nameTr: e.target.value })} className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold" />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Açıklama</label>
-                                    <textarea
-                                        rows={4}
-                                        value={formData.descriptionTr}
-                                        onChange={(e) => setFormData({ ...formData, descriptionTr: e.target.value })}
-                                        className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm resize-none"
-                                    ></textarea>
+                                    <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Name (EN)</label>
+                                    <input type="text" value={formData.nameEn} onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })} className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold" />
                                 </div>
                             </div>
-                            <div className="space-y-4">
-                                <h4 className="text-xs font-black text-primary uppercase tracking-widest">English</h4>
-                                <div>
-                                    <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Name</label>
-                                    <input
-                                        type="text"
-                                        value={formData.nameEn}
-                                        onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })}
-                                        className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Description</label>
-                                    <textarea
-                                        rows={4}
-                                        value={formData.descriptionEn}
-                                        onChange={(e) => setFormData({ ...formData, descriptionEn: e.target.value })}
-                                        className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm resize-none"
-                                    ></textarea>
-                                </div>
+                            <div>
+                                <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Açıklama</label>
+                                <textarea rows={4} value={formData.descriptionTr} onChange={(e) => setFormData({ ...formData, descriptionTr: e.target.value })} className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm resize-none"></textarea>
                             </div>
                         </div>
                     </div>
@@ -210,32 +210,21 @@ export default function EditProductPage() {
                         <h3 className="font-bold text-lg mb-4 text-secondary">Fiyat & Stok</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Fiyat (₺)</label>
-                                <input
-                                    type="number"
-                                    value={formData.price}
-                                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                    className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold"
-                                />
+                                <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Gramaj (Gram)</label>
+                                <input type="number" step="0.01" value={formData.weight} onChange={(e) => setFormData({ ...formData, weight: e.target.value })} className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold" />
+                                {formData.weight && goldPrice > 0 && (
+                                    <p className="text-[10px] text-amber-600 font-medium mt-1">
+                                        {formData.weight}g × {goldPrice.toLocaleString('tr-TR')} ₺ = {Math.round(parseFloat(formData.weight) * goldPrice).toLocaleString('tr-TR')} ₺
+                                    </p>
+                                )}
                             </div>
                             <div>
-                                <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Ağırlık (Gram)</label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    value={formData.weight}
-                                    onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
-                                    className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold"
-                                />
+                                <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Fiyat (₺)</label>
+                                <input type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold" />
                             </div>
                             <div>
                                 <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Stok Miktarı</label>
-                                <input
-                                    type="number"
-                                    value={formData.stock}
-                                    onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                                    className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold"
-                                />
+                                <input type="number" value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: e.target.value })} className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold" />
                             </div>
                         </div>
                     </div>
@@ -244,26 +233,16 @@ export default function EditProductPage() {
                 <div className="space-y-6">
                     <div className="bg-white p-6 rounded-sm border border-gray-100 shadow-sm">
                         <h3 className="font-bold text-lg mb-4 text-secondary">Kategori</h3>
-                        <select
-                            value={formData.category}
-                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                            className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold"
-                        >
+                        <select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} className="w-full p-2.5 border border-gray-200 rounded-sm focus:ring-1 focus:ring-primary outline-none text-sm font-bold">
                             <option value="Rings">Yüzükler</option>
                             <option value="Necklaces">Kolyeler</option>
                             <option value="Earrings">Küpeler</option>
                             <option value="Bracelets">Bileklikler</option>
                         </select>
                     </div>
-
                     <div className="bg-white p-6 rounded-sm border border-gray-100 shadow-sm">
                         <label className="flex items-center gap-3 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                checked={formData.isNew}
-                                onChange={(e) => setFormData({ ...formData, isNew: e.target.checked })}
-                                className="w-4 h-4 text-primary rounded-sm"
-                            />
+                            <input type="checkbox" checked={formData.isNew} onChange={(e) => setFormData({ ...formData, isNew: e.target.checked })} className="w-4 h-4 text-primary rounded-sm" />
                             <span className="text-sm font-bold text-secondary uppercase tracking-widest">Yeni Ürün (New)</span>
                         </label>
                     </div>

@@ -16,8 +16,6 @@ const Header = () => {
     const { items } = useCart();
     const { favorites } = useWishlist();
     const { t, locale, setLocale } = useLanguage();
-
-    if (pathname.startsWith('/admin')) return null;
     const { user, logout } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -25,6 +23,8 @@ const Header = () => {
     const userMenuRef = useRef<HTMLDivElement>(null);
     const langMenuRef = useRef<HTMLDivElement>(null);
     const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
+
+    if (pathname.startsWith('/admin')) return null;
 
     // Click outside handler for both menus
     useEffect(() => {
