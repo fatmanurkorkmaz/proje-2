@@ -48,6 +48,7 @@ export const products: Product[] = [
         weight: 22.0,
         image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=800',
         category: 'Bracelets',
+        isNew: true,
         stock: 12
     },
     {
@@ -72,6 +73,7 @@ export const products: Product[] = [
         weight: 4.8,
         image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&q=80&w=800',
         category: 'Rings',
+        isNew: true,
         stock: 15
     },
     {
@@ -96,6 +98,7 @@ export const products: Product[] = [
         weight: 10.2,
         image: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?auto=format&fit=crop&q=80&w=800',
         category: 'Necklaces',
+        isNew: true,
         stock: 4
     },
     {
@@ -109,5 +112,155 @@ export const products: Product[] = [
         image: 'https://images.unsplash.com/photo-1635767798638-3e25273a8256?auto=format&fit=crop&q=80&w=800',
         category: 'Earrings',
         stock: 15
+    },
+    {
+        id: '9',
+        nameTr: 'Saf Altın Baget Yüzük',
+        nameEn: 'Pure Gold Baguette Ring',
+        descriptionTr: 'Modern kesim baget elmaslarla süslenmiş saf altın yüzük.',
+        descriptionEn: 'Pure gold ring adorned with modern cut baguette diamonds.',
+        price: 32500,
+        weight: 6.2,
+        image: 'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?auto=format&fit=crop&q=80&w=800',
+        category: 'Rings',
+        isNew: true,
+        stock: 10
+    },
+    {
+        id: '10',
+        nameTr: 'Vintage Yakut Küpe',
+        nameEn: 'Vintage Ruby Earrings',
+        descriptionTr: 'Osmanlı esintili, yakut taşlı vintage tasarım küpeler.',
+        descriptionEn: 'Ottoman-inspired vintage design earrings with ruby stones.',
+        price: 18750,
+        weight: 9.8,
+        image: 'https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&q=80&w=800',
+        category: 'Earrings',
+        stock: 6
+    },
+    {
+        id: '11',
+        nameTr: 'Gökkuşağı Safir Kolye',
+        nameEn: 'Rainbow Sapphire Necklace',
+        descriptionTr: 'Farklı renklerdeki safir taşlarıyla neşeli ve lüks bir kolye.',
+        descriptionEn: 'A cheerful and luxurious necklace with sapphire stones in different colors.',
+        price: 29900,
+        weight: 14.2,
+        image: 'https://images.unsplash.com/photo-1603974372039-abc49e1d1d3e?auto=format&fit=crop&q=80&w=800',
+        category: 'Necklaces',
+        isNew: true,
+        stock: 2
+    },
+    {
+        id: '12',
+        nameTr: 'Örgü Altın Bilezik',
+        nameEn: 'Braided Gold Bracelet',
+        descriptionTr: 'Ustalıkla örülmüş 22 ayar altın zincir bilezik.',
+        descriptionEn: 'Expertly braided 22 carat gold chain bracelet.',
+        price: 48000,
+        weight: 34.5,
+        image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&q=80&w=800',
+        category: 'Bracelets',
+        stock: 10
+    },
+    {
+        id: '13',
+        nameTr: 'Modern Geometrik Küpe',
+        nameEn: 'Modern Geometric Earrings',
+        descriptionTr: 'Minimalist çizgiler sunan geometrik formlu altın küpeler.',
+        descriptionEn: 'Gold earrings with geometric forms offering minimalist lines.',
+        price: 6400,
+        weight: 4.1,
+        image: 'https://images.unsplash.com/photo-1588444837495-c6cfaf504670?auto=format&fit=crop&q=80&w=800',
+        category: 'Earrings',
+        isNew: true,
+        stock: 10
+    },
+    {
+        id: '14',
+        nameTr: 'Pırlanta Gerdanlık',
+        nameEn: 'Diamond Choker',
+        descriptionTr: 'Göz alıcı pırlanta dizisiyle zarafetin doruk noktası.',
+        descriptionEn: 'The pinnacle of elegance with a dazzling array of diamonds.',
+        price: 125000,
+        weight: 45.0,
+        image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=800',
+        category: 'Necklaces',
+        isNew: true,
+        stock: 1
+    },
+    {
+        id: '15',
+        nameTr: 'Ametist Taşlı Yüzük',
+        nameEn: 'Amethyst Stone Ring',
+        descriptionTr: 'Büyük damla kesim ametist taşlı gümüş yüzük.',
+        descriptionEn: 'Silver ring with a large pear-cut amethyst stone.',
+        price: 8900,
+        weight: 7.3,
+        image: 'https://images.unsplash.com/photo-1603561591411-071c7f1a393e?auto=format&fit=crop&q=80&w=800',
+        category: 'Rings',
+        stock: 20
+    },
+    {
+        id: '16',
+        nameTr: 'Yılan Figürlü Bileklik',
+        nameEn: 'Serpent Figure Bracelet',
+        descriptionTr: 'Egzotik ve şık yılan figürlü rose altın bileklik.',
+        descriptionEn: 'Exotic and stylish serpent figure rose gold bracelet.',
+        price: 31200,
+        weight: 18.2,
+        image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=800',
+        category: 'Bracelets',
+        isNew: true,
+        stock: 5
+    },
+    {
+        id: '17',
+        nameTr: 'Deniz Yıldızı Kolye',
+        nameEn: 'Starfish Necklace',
+        descriptionTr: 'Yaz esintisini taşıyan ince gümüş deniz yıldızı kolye.',
+        descriptionEn: 'A fine silver starfish necklace carrying the summer breeze.',
+        price: 4500,
+        weight: 3.8,
+        image: 'https://images.unsplash.com/photo-1599643478518-17488fbbcd75?auto=format&fit=crop&q=80&w=800',
+        category: 'Necklaces',
+        stock: 12
+    },
+    {
+        id: '18',
+        nameTr: 'Elmas Rozet Yüzük',
+        nameEn: 'Diamond Rose Ring',
+        descriptionTr: 'Gül formunda pırlanta işlemeli antika görünümlü yüzük.',
+        descriptionEn: 'Antique looking ring with diamond embroidery in the form of a rose.',
+        price: 24600,
+        weight: 5.9,
+        image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=800',
+        category: 'Rings',
+        stock: 10
+    },
+    {
+        id: '19',
+        nameTr: 'Siyah İnci Küpe',
+        nameEn: 'Black Pearl Earrings',
+        descriptionTr: 'Nadir bulunan Tahiti siyah incili gümüş küpeler.',
+        descriptionEn: 'Silver earrings with rare Tahitian black pearls.',
+        price: 9800,
+        weight: 11.0,
+        image: 'https://images.unsplash.com/photo-1635767798638-3e25273a8256?auto=format&fit=crop&q=80&w=800',
+        category: 'Earrings',
+        isNew: true,
+        stock: 4
+    },
+    {
+        id: '20',
+        nameTr: 'Zarif Ayak Halhalı',
+        nameEn: 'Elegant Anklet',
+        descriptionTr: 'Altın toplarla süslenmiş zarif ve ince halhal.',
+        descriptionEn: 'Elegant and fine anklet adorned with gold balls.',
+        price: 5200,
+        weight: 2.8,
+        image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=800',
+        category: 'Bracelets',
+        stock: 3
     }
 ];

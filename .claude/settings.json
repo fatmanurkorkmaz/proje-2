@@ -1,0 +1,5 @@
+{
+  "hooks": {
+    "skill": "cd /Users/fatmanurkorkmaz/proje2 && npx -y @anthropic-ai/skill-runner@latest {{skill}}"
+  }
+}

@@ -10,7 +10,7 @@ import { AuthProvider } from '@/context/AuthContext';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { WishlistProvider } from '@/context/WishlistContext';
 import ScrollToTop from '@/components/ScrollToTop';
-import { migrateJsonToSql } from '@/lib/db';
+import Chatbot from '@/components/Chatbot';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' });
@@ -25,12 +25,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Trigger migration from JSON to SQL on startup
-  try {
-    await migrateJsonToSql();
-  } catch (e) {
-    console.error('Initial migration failed:', e);
-  }
   return (
     <html lang="tr">
       <body
@@ -48,6 +42,7 @@ export default async function RootLayout({
                     </main>
                     <Footer />
                     <ScrollToTop />
+                    <Chatbot />
                   </CartProvider>
                 </ProductProvider>
               </WishlistProvider>
